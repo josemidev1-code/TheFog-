@@ -1,0 +1,26 @@
+[1m── Plan ──────────────────────────[22m
+input: dry Mediterranean scrub bush of rockrose and broom, dense twiggy shrub with small dull olive green leaves, rural Spain late 1980s, worn and weathered, aged materials, dust and grime, realistic proportions, muted desaturated colors, no logos, no text, single object, neutral pose, game asset
+model: v3.1-20260211[2m — explicit --model[22m
+steps:
+  1. text-to-model  [2mPOST /v3/generation/text-to-model[22m — generate a 3D model from text
+[2m     texture_quality="detailed" pbr=false model="v3.1-20260211"[22m
+deliverables: GLB
+cost impact:
+  · estimated generation cost: 30 credits (official list price)
+  · texture_quality detailed: higher price tier
+[1m──────────────────────────────────[22m
+model: v3.1-20260211 (explicit --model)
+task created 12cb95ac-50ee-49c3-9a48-f9caad90e324 (@t1-matorral)
+text_to_model · queued
+text_to_model · running 5% · 12cb95ac
+text_to_model · running 9% · 12cb95ac
+text_to_model · running 14% · 12cb95ac
+text_to_model · running 22% · 12cb95ac
+text_to_model · running 33% · 12cb95ac
+text_to_model · running 50% · 12cb95ac
+text_to_model · running 72% · 12cb95ac
+text_to_model · running 93% · 12cb95ac
+text_to_model · success 100% · 12cb95ac
+[32m✓[39m text_to_model · 12cb95ac-50ee-49c3-9a48-f9caad90e324 · 30 credits
+downloading artifacts…
+[32m✓[39m artifacts saved to matorral\tripo-out\t1-matorral-12cb95ac

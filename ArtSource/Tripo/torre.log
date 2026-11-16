@@ -1,0 +1,26 @@
+[1m── Plan ──────────────────────────[22m
+input: tall wooden forest fire lookout tower standing on four splayed square timber legs with diagonal cross bracing, zig-zag wooden staircase with landings attached to one side, small square wooden cabin on top with windows on all four sides and a low pitched corrugated metal roof, narrow wooden deck with railing around the cabin, rural Spain late 1980s, worn and weathered, aged materials, dust and grime, realistic proportions, muted desaturated colors, no logos, no text, single object, neutral pose, game asset
+model: v3.1-20260211[2m — explicit --model[22m
+steps:
+  1. text-to-model  [2mPOST /v3/generation/text-to-model[22m — generate a 3D model from text
+[2m     texture_quality="detailed" pbr=false model="v3.1-20260211"[22m
+deliverables: GLB
+cost impact:
+  · estimated generation cost: 30 credits (official list price)
+  · texture_quality detailed: higher price tier
+[1m──────────────────────────────────[22m
+model: v3.1-20260211 (explicit --model)
+task created fdc9f45d-f00f-4796-a063-52630dca973b (@t1-torre)
+text_to_model · queued
+text_to_model · running 6% · fdc9f45d
+text_to_model · running 10% · fdc9f45d
+text_to_model · running 16% · fdc9f45d
+text_to_model · running 24% · fdc9f45d
+text_to_model · running 37% · fdc9f45d
+text_to_model · running 55% · fdc9f45d
+text_to_model · running 79% · fdc9f45d
+text_to_model · running 99% · fdc9f45d
+text_to_model · success 100% · fdc9f45d
+[32m✓[39m text_to_model · fdc9f45d-f00f-4796-a063-52630dca973b · 30 credits
+downloading artifacts…
+[32m✓[39m artifacts saved to torre\tripo-out\t1-torre-fdc9f45d

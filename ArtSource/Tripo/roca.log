@@ -1,0 +1,26 @@
+[1m── Plan ──────────────────────────[22m
+input: large weathered grey granite boulder with patches of pale lichen, rural Spain late 1980s, worn and weathered, aged materials, dust and grime, realistic proportions, muted desaturated colors, no logos, no text, single object, neutral pose, game asset
+model: v3.1-20260211[2m — explicit --model[22m
+steps:
+  1. text-to-model  [2mPOST /v3/generation/text-to-model[22m — generate a 3D model from text
+[2m     texture_quality="detailed" pbr=false model="v3.1-20260211"[22m
+deliverables: GLB
+cost impact:
+  · estimated generation cost: 30 credits (official list price)
+  · texture_quality detailed: higher price tier
+[1m──────────────────────────────────[22m
+model: v3.1-20260211 (explicit --model)
+task created da9d6d92-0511-45e9-8aa0-9b4f6adc7c6b (@t1-roca)
+text_to_model · queued
+text_to_model · running 5% · da9d6d92
+text_to_model · running 9% · da9d6d92
+text_to_model · running 14% · da9d6d92
+text_to_model · running 22% · da9d6d92
+text_to_model · running 33% · da9d6d92
+text_to_model · running 50% · da9d6d92
+text_to_model · running 72% · da9d6d92
+text_to_model · running 93% · da9d6d92
+text_to_model · success 100% · da9d6d92
+[32m✓[39m text_to_model · da9d6d92-0511-45e9-8aa0-9b4f6adc7c6b · 30 credits
+downloading artifacts…
+[32m✓[39m artifacts saved to roca\tripo-out\t1-roca-da9d6d92

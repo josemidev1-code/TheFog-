@@ -41,3 +41,11 @@ mono_crash.*.json
 # Ejecutables y pruebas automáticas locales
 /[Bb]uilds/
 /autotest/
+
+# THE FOG: originales y temporales de Tripo y Blender (pesados; copia solo local, ver docs/entorno/README.md)
+/ArtSource/Tripo/**/tripo-out/
+/ArtSource/Tripo/_prep/
+/ArtSource/Tripo/ref/
+/ArtSource/Pixel/render/
+/Assets/Screenshots/
+/Assets/Screenshots.meta

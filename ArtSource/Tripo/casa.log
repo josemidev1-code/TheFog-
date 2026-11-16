@@ -1,0 +1,26 @@
+[1m── Plan ──────────────────────────[22m
+input: small one-story rural Spanish farmhouse, thick stone walls covered in peeling whitewash lime plaster, old curved terracotta tile roof, faded green wooden door, small windows with wooden shutters, simple chimney, attached lean-to woodshed, rural Spain late 1980s, worn and weathered, aged materials, dust and grime, realistic proportions, muted desaturated colors, no logos, no text, single object, neutral pose, game asset
+model: v3.1-20260211[2m — explicit --model[22m
+steps:
+  1. text-to-model  [2mPOST /v3/generation/text-to-model[22m — generate a 3D model from text
+[2m     texture_quality="detailed" pbr=false model="v3.1-20260211"[22m
+deliverables: GLB
+cost impact:
+  · estimated generation cost: 30 credits (official list price)
+  · texture_quality detailed: higher price tier
+[1m──────────────────────────────────[22m
+model: v3.1-20260211 (explicit --model)
+task created a17c8a5a-15a8-42c9-bf59-f1cefb3cdb27 (@t1-casa)
+text_to_model · queued
+text_to_model · running 6% · a17c8a5a
+text_to_model · running 10% · a17c8a5a
+text_to_model · running 15% · a17c8a5a
+text_to_model · running 24% · a17c8a5a
+text_to_model · running 37% · a17c8a5a
+text_to_model · running 56% · a17c8a5a
+text_to_model · running 80% · a17c8a5a
+text_to_model · running 99% · a17c8a5a
+text_to_model · success 100% · a17c8a5a
+[32m✓[39m text_to_model · a17c8a5a-15a8-42c9-bf59-f1cefb3cdb27 · 30 credits
+downloading artifacts…
+[32m✓[39m artifacts saved to casa\tripo-out\t1-casa-a17c8a5a

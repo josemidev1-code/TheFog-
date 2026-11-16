@@ -1,0 +1,24 @@
+[1m── Plan ──────────────────────────[22m
+input: ref/gallinero/tripo-out/ref-gallinero-2e8c818a/generated_image.png
+model: P2-20260801[2m — explicit --model[22m
+steps:
+  1. image-to-model  [2mPOST /v3/generation/image-to-model[22m — generate a 3D model from one image
+[2m     texture_quality="detailed" pbr=false model="P2-20260801"[22m
+deliverables: GLB
+cost impact:
+  · estimated generation cost: 120 credits (official list price)
+  · texture_quality detailed: higher price tier
+[1m──────────────────────────────────[22m
+model: P2-20260801 (explicit --model)
+task created 030fae79-dff3-4dbe-9196-631b34e01453 (@p2-gallinero)
+image_to_model · queued
+image_to_model · running 7% · 030fae79
+image_to_model · running 12% · 030fae79
+image_to_model · running 20% · 030fae79
+image_to_model · running 31% · 030fae79
+image_to_model · running 46% · 030fae79
+image_to_model · running 70% · 030fae79
+image_to_model · success 100% · 030fae79
+[32m✓[39m image_to_model · 030fae79-dff3-4dbe-9196-631b34e01453 · 120 credits
+downloading artifacts…
+[32m✓[39m artifacts saved to p2\gallinero\tripo-out\p2-gallinero-030fae79

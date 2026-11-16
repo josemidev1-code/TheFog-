@@ -6,6 +6,9 @@ EditorBuildSettings:
   serializedVersion: 2
   m_Scenes:
   - enabled: 1
+    path: Assets/Scenes/TorreDaniel.unity
+    guid: 3b9946e76082a7b4f98bb86167b2659a
+  - enabled: 1
     path: Assets/Scenes/PuestoDaniel.unity
     guid: cb34910436c3c6445981db98cd6ce8d0
   - enabled: 1

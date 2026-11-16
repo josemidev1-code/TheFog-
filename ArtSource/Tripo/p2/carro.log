@@ -1,0 +1,24 @@
+[1m── Plan ──────────────────────────[22m
+input: ref/carro/tripo-out/ref-carro-85988bd2/generated_image.png
+model: P2-20260801[2m — explicit --model[22m
+steps:
+  1. image-to-model  [2mPOST /v3/generation/image-to-model[22m — generate a 3D model from one image
+[2m     texture_quality="detailed" pbr=false model="P2-20260801"[22m
+deliverables: GLB
+cost impact:
+  · estimated generation cost: 120 credits (official list price)
+  · texture_quality detailed: higher price tier
+[1m──────────────────────────────────[22m
+model: P2-20260801 (explicit --model)
+task created e3ec0e46-f357-43ac-b881-2440d7996697 (@p2-carro)
+image_to_model · queued
+image_to_model · running 5% · e3ec0e46
+image_to_model · running 11% · e3ec0e46
+image_to_model · running 17% · e3ec0e46
+image_to_model · running 27% · e3ec0e46
+image_to_model · running 42% · e3ec0e46
+image_to_model · running 64% · e3ec0e46
+image_to_model · success 100% · e3ec0e46
+[32m✓[39m image_to_model · e3ec0e46-f357-43ac-b881-2440d7996697 · 120 credits
+downloading artifacts…
+[32m✓[39m artifacts saved to p2\carro\tripo-out\p2-carro-e3ec0e46

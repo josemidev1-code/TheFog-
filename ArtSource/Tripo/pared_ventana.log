@@ -1,0 +1,26 @@
+[1m── Plan ──────────────────────────[22m
+input: flat rectangular exterior wall panel of a wooden fire lookout cabin with one wide window, horizontal weathered wooden planks with peeling grey-green paint, wooden window frame with dirty glass panes, about 3 meters wide and 2.6 meters tall, rural Spain late 1980s, worn and weathered, aged materials, dust and grime, realistic proportions, muted desaturated colors, no logos, no text, single object, neutral pose, game asset
+model: v3.1-20260211[2m — explicit --model[22m
+steps:
+  1. text-to-model  [2mPOST /v3/generation/text-to-model[22m — generate a 3D model from text
+[2m     texture_quality="detailed" pbr=false model="v3.1-20260211"[22m
+deliverables: GLB
+cost impact:
+  · estimated generation cost: 30 credits (official list price)
+  · texture_quality detailed: higher price tier
+[1m──────────────────────────────────[22m
+model: v3.1-20260211 (explicit --model)
+task created cbe281f4-9e3f-48d6-81cb-97fe1c0cbf50 (@prueba-pared-ventana)
+text_to_model · queued
+text_to_model · running 3% · cbe281f4
+text_to_model · running 6% · cbe281f4
+text_to_model · running 9% · cbe281f4
+text_to_model · running 15% · cbe281f4
+text_to_model · running 22% · cbe281f4
+text_to_model · running 33% · cbe281f4
+text_to_model · running 47% · cbe281f4
+text_to_model · running 61% · cbe281f4
+text_to_model · success 100% · cbe281f4
+[32m✓[39m text_to_model · cbe281f4-9e3f-48d6-81cb-97fe1c0cbf50 · 30 credits
+downloading artifacts…
+[32m✓[39m artifacts saved to ArtSource\Tripo\pared_ventana\tripo-out\prueba-pared-ventana-cbe281f4

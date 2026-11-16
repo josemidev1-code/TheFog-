@@ -58,7 +58,9 @@ namespace TheFog.Puesto
             Add("La introducción termina y empieza el turno", g.State == GameState.Playing && g.clock.running);
             yield return new WaitForSeconds(0.5f);
             Vector3 p0 = g.player.transform.position;
-            Add("Daniel está de pie en la cabina", p0.y > 6.5f && p0.y < 9f, p0.ToString());
+            // Relativo a la consola: la cabina está a 7 m en PuestoDaniel y a 12 m en TorreDaniel.
+            float cabinFloor = g.console.transform.position.y - 1.1f;
+            Add("Daniel está de pie en la cabina", Mathf.Abs(p0.y - cabinFloor) < 1.2f, p0.ToString());
 
             g.player.TestMove(g.player.transform.forward, 1f);
             yield return new WaitForSeconds(1.2f);

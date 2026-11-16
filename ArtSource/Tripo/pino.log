@@ -1,0 +1,26 @@
+[1m── Plan ──────────────────────────[22m
+input: young Aleppo pine tree with a thin leaning trunk, reddish grey bark and sparse irregular clumps of dark green needles, rural Spain late 1980s, worn and weathered, aged materials, dust and grime, realistic proportions, muted desaturated colors, no logos, no text, single object, neutral pose, game asset
+model: v3.1-20260211[2m — explicit --model[22m
+steps:
+  1. text-to-model  [2mPOST /v3/generation/text-to-model[22m — generate a 3D model from text
+[2m     texture_quality="detailed" pbr=false model="v3.1-20260211"[22m
+deliverables: GLB
+cost impact:
+  · estimated generation cost: 30 credits (official list price)
+  · texture_quality detailed: higher price tier
+[1m──────────────────────────────────[22m
+model: v3.1-20260211 (explicit --model)
+task created 688e96e8-2bec-4f42-8a2c-0ccc92674654 (@t1-pino)
+text_to_model · queued
+text_to_model · running 3% · 688e96e8
+text_to_model · running 5% · 688e96e8
+text_to_model · running 8% · 688e96e8
+text_to_model · running 12% · 688e96e8
+text_to_model · running 18% · 688e96e8
+text_to_model · running 26% · 688e96e8
+text_to_model · running 38% · 688e96e8
+text_to_model · running 49% · 688e96e8
+text_to_model · success 100% · 688e96e8
+[32m✓[39m text_to_model · 688e96e8-2bec-4f42-8a2c-0ccc92674654 · 30 credits
+downloading artifacts…
+[32m✓[39m artifacts saved to pino\tripo-out\t1-pino-688e96e8
