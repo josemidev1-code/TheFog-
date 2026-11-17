@@ -184,7 +184,7 @@ namespace TheFog.EditorTools.Entorno
                 {
                     BoxLocal(g, esPuerta ? "Puerta" : "PuertaBalcon", centro + Vector3.forward * 0.08f, new Vector3(h.ancho - 0.1f, alto - 0.06f, 0.06f), Quaternion.identity, abandonada ? tabla : puerta, false);
                     if (esBalcon) Balcon(g, c + Vector3.up * h.abajo, h.ancho + 0.6f);
-                    if (esPuerta && P(0.35f)) Farol(g, new Vector3(c.x, 2.55f, -0.22f));
+                    if (esPuerta && P(0.35f)) Farol(g, new Vector3(c.x + (P(0.5f) ? 0.95f : -0.95f), 2.35f, -0.22f)); // al lado de la puerta, bajo el balcón
                 }
                 else if (abandonada)
                 {
@@ -248,8 +248,19 @@ namespace TheFog.EditorTools.Entorno
                 Reja(g, "BarandillaLado", f + new Vector3(s * (ancho / 2f - 0.03f), 0.5f, -0.33f), Vector3.forward, 0.58f, 0.95f, hierro);
         }
 
-        static void Farol(Transform g, Vector3 pos)
+        /// <summary>Farol fernandino de forja (modelado en Blender) clavado en la fachada (z = 0), con su luz.</summary>
+        public static void Farol(Transform g, Vector3 pos)
         {
+            var modelo = AssetDatabase.LoadAssetAtPath<GameObject>("Assets/Models/Blender/FarolFernandino.glb");
+            if (modelo != null)
+            {
+                var f = (GameObject)PrefabUtility.InstantiatePrefab(modelo, g);
+                f.name = "FarolFernandino";
+                f.transform.localPosition = new Vector3(pos.x, pos.y + 0.25f, 0f); // pletina en la pared
+                f.transform.localRotation = Quaternion.Euler(0, 180f, 0);           // el brazo sale hacia la calle (-Z)
+                Luz(g, new Vector3(pos.x, pos.y - 0.15f, -0.9f), 0.8f, 7f); // separada de la pared: sin mancha quemada
+                return;
+            }
             BoxLocal(g, "BrazoFarol", pos + new Vector3(0, 0.15f, 0.1f), new Vector3(0.04f, 0.04f, 0.35f), Quaternion.identity, hierro, false);
             BoxLocal(g, "Farol", pos, new Vector3(0.2f, 0.28f, 0.2f), Quaternion.identity, farolLuz, false);
             BoxLocal(g, "TejadilloFarol", pos + new Vector3(0, 0.17f, 0), new Vector3(0.28f, 0.05f, 0.28f), Quaternion.identity, hierro, false);

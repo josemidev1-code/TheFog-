@@ -6,6 +6,13 @@ Las entradas van de la más reciente a la más antigua.
 
 ---
 
+## 17/11/2026 — Primer modelo hecho en Blender: farol fernandino
+
+- Blender 5.2 conectado: addon **MCP for Blender** activado (telemetría desactivada) y servidor `blender` registrado en Claude Code. Unity habla con Blender directamente con `blender_bridge` (MCP for Unity): se modela en Blender y se importa al proyecto sin pasos manuales.
+- **Farol fernandino de forja** modelado en Blender por código (pletina, brazo curvo con voluta, farol troncopiramidal con cristal que brilla): 2 332 triángulos, 60 cm. En `Assets/Models/Blender/FarolFernandino.glb`.
+- Sustituye a los faroles de caja en las casas del pueblo (al lado de la puerta, por debajo del balcón), el ayuntamiento, la iglesia y la puerta de Daniel (bajo la viga del emparrado). La luz se separa 0,9 m de la pared y baja a 0,8 de intensidad para no quemar la cal.
+- Capturas: [en la casa de Daniel](farol_fernandino_casa.png), [en el pueblo](farol_fernandino_pueblo.png).
+
 ## 17/11/2026 — Pueblo de Valdara (primera versión) con estética MOLDRISE
 
 **Hecho** (`THE FOG → Entorno → Construir pueblo de Valdara`, `Assets/Editor/Entorno/PuebloBuilder.cs`):

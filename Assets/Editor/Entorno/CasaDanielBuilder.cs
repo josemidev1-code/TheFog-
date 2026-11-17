@@ -225,7 +225,9 @@ namespace TheFog.EditorTools.Entorno
         {
             Bombilla(g, "LuzCocina", new Vector3(-2f, 2.5f, 0f), 2.2f, 7f, true);
             Bombilla(g, "LuzDormitorio", new Vector3(3f, 2.5f, 1.6f), 1.6f, 5f, false);
-            Bombilla(g, "FarolPuerta", new Vector3(-1.8f, 2.45f, -D / 2f - 0.18f), 1.6f, 9f, true);
+            // Farol fernandino junto a la puerta (fachada sur, z = -D/2), el mismo que en el pueblo.
+            var fachada = Group("FarolPuerta", g); fachada.localPosition = new Vector3(0, 0, -D / 2f);
+            PuebloBuilder.Farol(fachada, new Vector3(-0.85f, 1.95f, 0f)); // bajo la viga del emparrado
             var fuego = new GameObject("LuzBrasas").AddComponent<Light>();
             fuego.transform.SetParent(g, false);
             fuego.transform.localPosition = new Vector3(-W / 2f + T + 0.45f, Suelo + 0.4f, 0);
