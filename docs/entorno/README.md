@@ -4,6 +4,13 @@ Escena: `Assets/Scenes/TorreDaniel.unity`. Objetivo: la torre de vigilancia, la 
 
 Las entradas van de la más reciente a la más antigua.
 
+## Dónde lo dejamos (17/11/2026, noche)
+
+- **Para jugar:** abrir el proyecto en Unity y pulsar Play. Arranca siempre `TorreDaniel` en la puerta de Daniel (menú THE FOG > Play arranca el juego). WASD, ratón, Mayús para correr, Esc suelta el ratón, F1 ayuda.
+- **GitHub:** todo subido a `main` (commit `c162700`).
+- **Blender:** el fuente del farol está en `ArtSource/Blender/FarolFernandino.blend`. Para trabajar con Blender desde Claude: abrir Blender 5.2 (el addon MCP arranca solo) y Unity con el servidor MCP en marcha (Window > MCP for Unity > Start Server).
+- **Siguiente, a elegir:** interiores jugables del pueblo (bar, casa de Fred, ayuntamiento); afueras (huertos, corrales, cementerio, boca de mina); detalle de calle (cables entre fachadas, bancos, macetas); amueblar la casa de Daniel; caseta de la torre jugable; primer trozo de juego (bucle de partida).
+
 ---
 
 ## 17/11/2026 — Primer modelo hecho en Blender: farol fernandino
