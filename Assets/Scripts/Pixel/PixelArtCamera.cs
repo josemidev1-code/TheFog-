@@ -13,7 +13,7 @@ namespace TheFog.Pixel
     public class PixelArtCamera : MonoBehaviour
     {
         [Tooltip("Altura interna en píxeles. 180 = 320 × 180 en 16:9.")]
-        [Range(120, 360)] public int altura = 180;
+        [Range(120, 720)] public int altura = 180;
         [Tooltip("Paleta común (tira de colores, Read/Write activado). Assets/Art/Pixel/paleta_thefog.png")]
         public Texture2D paleta;
         public Shader shader;
@@ -21,6 +21,8 @@ namespace TheFog.Pixel
         [Range(0.5f, 2f)] public float brillo = 1.05f;
         [Range(0.5f, 2f)] public float contraste = 1.05f;
         [Range(0f, 1f)] public float vineta = 0.35f;
+        [Tooltip("0 = solo los 32 colores de la paleta. Más alto = se mezcla con el color original y los degradados salen suaves.")]
+        [Range(0f, 1f)] public float fidelidad = 0f;
 
         Camera cam;
         RenderTexture rt;
@@ -82,6 +84,7 @@ namespace TheFog.Pixel
             mat.SetFloat("_Brillo", brillo);
             mat.SetFloat("_Contraste", contraste);
             mat.SetFloat("_Vineta", vineta);
+            mat.SetFloat("_Fidelidad", fidelidad);
         }
 
         /// <summary>Tabla 32×32×32 (aplanada a 1024×32): para cada color, el más cercano de la paleta.</summary>

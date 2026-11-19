@@ -2,6 +2,8 @@
 
 Proyecto Unity 6000.6.8f1 (URP), preparado para compartir los modelos de OneDrive mediante Git LFS.
 
+**Para continuar el proyecto, lee primero [RELEVO.md](RELEVO.md):** dice en qué se está trabajando, cómo está montado y qué falta.
+
 Guía para otro ordenador: [ABRIR EN CLASE](docs/ABRIR_EN_CLASE.md). Rama actual: `main`.
 
 ## Primera versión jugable: Puesto de Daniel

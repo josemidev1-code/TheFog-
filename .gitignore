@@ -49,3 +49,6 @@ mono_crash.*.json
 /ArtSource/Pixel/render/
 /Assets/Screenshots/
 /Assets/Screenshots.meta
+
+# Pack original comprimido: ya está descomprimido al lado
+/ArtSource/Elbolilloduro/*.zip

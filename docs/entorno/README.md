@@ -4,11 +4,94 @@ Escena: `Assets/Scenes/TorreDaniel.unity`. Objetivo: la torre de vigilancia, la 
 
 Las entradas van de la más reciente a la más antigua.
 
+## Dónde lo dejamos (19/11/2026, mañana) — escena del bosque
+
+- **Para jugar el bosque:** abrir `Assets/Scenes/Bosque.unity` y pulsar Play (con esa escena abierta, Play arranca en ella; con cualquier otra sigue arrancando `TorreDaniel`). WASD, ratón, Mayús correr, **E usar**, **F linterna**, Esc suelta el ratón.
+- **Qué hay:** Daniel despierta en su casa sin luz → coge la linterna de la mesilla y la garrafa junto a la puerta → sendero entre la niebla (hay una silueta que desaparece al alumbrarla o acercarse) → generador al pie de la torre (repostar y tres tirones) → vuelven las luces → cabina → monitor con tres cámaras (en la de la casa hay alguien; al cambiar de cámara ya no está y la puerta queda abierta) → emisora → rótulo de «continuará».
+- **Reconstruir la escena:** `THE FOG → Bosque → 1. Importar kit de modelos` (solo si cambian modelos o texturas) y `2. Construir escena del bosque`. Rehace todo con semilla fija.
+- **Lore:** la propuesta de biblia narrativa escrita por ChatGPT está en [../lore/biblia_narrativa_propuesta_1.md](../lore/biblia_narrativa_propuesta_1.md). **Pendiente de que Josemi la apruebe**; los textos del juego (cuaderno, radio municipal, hoja de mantenimiento, transmisión) salen de ahí.
+- **Subido a GitHub el 19/11 por la tarde.** Resumen para quien continúe: [RELEVO.md](../../RELEVO.md). Pendientes: [PENDIENTE_BOSQUE.md](PENDIENTE_BOSQUE.md).
+- **Norma de Josemi (19/11, mediodía):** si falta un modelo, **no se inventa ni se sustituye: se le pide** y lo hace él en Tripo. La lista de lo que falta está en PENDIENTE_BOSQUE.md.
+
+---
+
+## 19/11/2026 (mediodía) — Bosque: interior recolocado y cables en los postes
+
+**Por qué:** Josemi vio el interior y avisó de que las sillas, el tronco y la estufa («puesta hacia una pared») estaban mal colocados, y de que a los postes les faltaba el cable.
+
+**Casa de Daniel** (`BosqueAsentamiento.cs`):
+- La estufa va en la esquina, en diagonal, con la boca hacia la habitación (`Recolocar`, que gira y mueve una pieza que el pack trae ya colocada). La tetera apoya en la plancha (antes estaba medio hundida).
+- Dos sillas: una sentada a la mesa de la radio y otra frente a la boca de la estufa (`Silla(sitio, mira)`). La silla suelta del pack se quita.
+- Leña apilada contra la pared al lado de la estufa; mochila apoyada junto a la mesilla; cubo en el suelo entre la mesa y la cómoda.
+- Estantería con contenido del mismo pack (libros, papeles, latas, botellas, cantimplora, cerillas, cazo, sartén, platos, taza, caja) y la mochila pequeña encima.
+- Los enseres apoyan en el suelo de tablas (`SueloCasa`); antes flotaban 3 cm.
+
+**Tendido** (`BosqueTendido.cs`, nuevo):
+- Los postes giran 90°: el travesaño queda perpendicular a la línea. Cuatro hilos, uno por aislador (medidos en la malla del poste), con comba entre poste y poste.
+- Acometida a la casa (los hilos acaban en la cumbrera del porche), bajada a una pata de la torre, cable por la pata hasta el suelo y manguera por el suelo hasta el generador.
+- El cable es lo único que no es un modelo: cada vano mide distinto, así que es una malla de tubo fino calculada entre aisladores (`Assets/Models/Retro/Bosque/Tendido/Cables.asset`).
+- Calle sin árboles de 7,5 m a cada lado de la línea (se quitan 10 árboles; el resto del bosque no cambia).
+
+**Piezas del pack con las caras del revés** (`CarasDelDerecho`): la caja de herramientas (se veía como una chapa gris junto al generador), la linterna, el hacha y varios marcos de ventana vienen espejados. Se detectan por el volumen con signo de la malla y se sustituyen por una copia corregida en `Assets/Models/Retro/Bosque/Corregidos/` (18 mallas; la carpeta se rehace en cada construcción).
+
+**Otros:** silla de la cabina a la mesita auxiliar (estaba de espaldas a la cómoda); emisora y monitor metidos hacia las ventanas; pala apoyada en la pared de la casa; fuera el tronco suelto de delante del porche; la hierba ya no crece atravesando bidones y cajas.
+
+**Cómo se revisó:** capturas con luz de trabajo y sin niebla, revisadas por agentes independientes antes (búsqueda de fallos) y después (verificación de cada arreglo). En Play: Daniel llega andando a la mesilla, la mesa, la cómoda, la garrafa y la puerta; 15 objetos con E; sin errores en consola.
+
+**Capturas:** [tendido de noche](../capturas/bosque_21_tendido_noche.png), [estufa y silla](../capturas/bosque_20_estufa_y_silla.png).
+
+### Misma tarde — la cocina pasa de la torre a la casa
+
+**Por qué:** Josemi: «la casa tiene más sentido que tenga cocina, ¿no?, y un baño… reconsidera eso y la torre». La cabina de la torre traía del pack una cocina entera y la casa ninguna.
+
+- `tools/bosque_cocina.py` (Blender, sin interfaz) parte la encimera en L de la cabina por sus juntas (es una sola malla, pero modular) y saca tres piezas a `Assets/Models/Retro/Bosque/Edificios`: `Prop_Cocina.fbx` (fregadero + módulo estrecho + cajones, 2,46 m), `Prop_Banco_Torre.fbx` (dos módulos sin fregadero, 2,46 m) y `Prop_Cocina_Gas.fbx`. Los cantos al aire se tapan copiando las caras del canto original. Después hay que pasar `THE FOG → Bosque → 1. Importar kit`.
+- **Casa:** encimera con fregadero y cocina de gas en la pared de la ventana, con los cacharros y la comida encima. La estantería se quita; la cómoda del detector pasa a la pared del fondo, entre la cocina y la cama, con el calendario encima; la mesa de la radio se corre hacia la puerta. El cuaderno del abuelo va tumbado sobre la mesa (el modelo viene de canto).
+- **Torre:** fuera la encimera en L, la cocina de gas y los platos. Queda un banco de trabajo de dos módulos con la emisora, el monitor, los partes y la linterna. La cama, la estufa de leña y los archivadores siguen (la cama, a decidir).
+- **Baño:** sin hacer. La cabaña es una habitación de 5 × 4,7 m; propuesta: retrete exterior detrás de la casa y palanganero dentro. Faltan los modelos (lista en PENDIENTE_BOSQUE.md).
+
+**Arreglos de la segunda revisión independiente:** los cuatro hilos de la acometida se recogen en la punta de la cumbrera del porche (antes acababan en dos sitios); la bajada sigue una arista de la pata de la torre (se busca en la malla la arista larga casi vertical más cercana); el cable pasa a material con sombreado y normales radiales (antes se veía como una cinta plana); los marcos de ventana «mezclados» llevan caras por los dos lados; `heightmapPixelError` del terreno a 1.
+
+**Ojo con las capturas en Play:** si Unity no tiene el foco, el juego no avanza y `manage_camera screenshot` deja en consola «PlayerLoop called recursively» y estados raros (rótulo de inicio atascado). Poner `Application.runInBackground = true` por `execute_code` nada más entrar en Play y esperar a que pase el fundido.
+
+**Capturas:** [cocina en la casa](../capturas/bosque_32_cocina_casa.png), [banco de la torre](../capturas/bosque_33_banco_torre.png), [casa con luz de trabajo](../capturas/bosque_34_casa_con_cocina_luz_de_trabajo.png), [acometida](../capturas/bosque_36_acometida_cumbrera.png), [bajada a la torre](../capturas/bosque_37_bajada_torre.png).
+
+---
+
+## 19/11/2026 — Bosque: escena propia, casa, torre, generador e inicio jugable
+
+**Por qué:** el bosque no va en el terreno de Valdara (ese es el pueblo). Va en una escena aparte, y todo lo que se coloca tiene que ser un modelo 3D con la estética MOLDRISE + No, I'm Not a Human, menos pixelada.
+
+**Modelos** (un solo origen para que todo pegue): pack «Vegetation» de Elbolilloduro (itch.io, CC0, estilo PSX). Original en `ArtSource/Elbolilloduro/`.
+- `tools/bosque_split_pack.py` → 65 piezas de vegetación (pinos, árboles de hoja, arbustos, hierba, rocas, troncos, tocones) en `Assets/Models/Retro/Bosque/Modelos`.
+- `tools/bosque_split_edificios.py` → `Torre_Vigia.fbx` (torre de 24 m con cabina amueblada), `Cabana.fbx` (casa con interior, estufa, cama, puerta), `Coche.fbx` y 35 objetos sueltos (`Prop_*.fbx`) en `.../Edificios`.
+- `tools/bosque_silueta.py` → `Figura/Silueta.fbx`, la figura humana (hecha en Blender; fuente en `ArtSource/Blender/Silueta.blend`).
+- De lo que ya había: generador, pozo, leña, carro y postes de Tripo; radio, televisor y garrafa de Poly Haven.
+- **Modelo exclusivo nuevo:** el detector del abuelo. Imagen pedida a ChatGPT (`ArtSource/Tripo/ref/detector_abuelo.png`) → Tripo v3.1 imagen-a-3D por CLI (30 créditos; quedan 70) → `tools/tripo_prepare.py` (4 998 triángulos, 25 cm) → `Assets/Models/Retro/Tripo/detector`. Está sobre la cómoda de la casa y se puede examinar. [Captura](../capturas/bosque_18_detector_abuelo.png).
+
+**Escena** (`BosqueBuilder.cs` + `BosqueAsentamiento.cs`): terreno de 500 × 500 m con tres capas, sendero principal y ramal, tres claros, 2 161 árboles, 322 rocas, 290 troncos/tocones/ramas, 520 arbustos y 3 160 matas de hierba. Casa de Daniel en el claro central (11, −8), torre en el claro del oeste (−100, −8), generador con bidones al pie, postes siguiendo el ramal, explanadas llanas bajo los edificios. La estructura de la torre va con material de **metal oxidado** (la cabina sigue de madera); se quita con `TorreDeMetal = false`.
+
+**Juego** (`Assets/Scripts/Entorno/`): `BosqueJuego` (en Daniel: E, linterna, textos, sonido generado por código, sucesos), `Interactuable`, `Examinable`, `Recogible`, `GeneradorBosque`, `RadioBosque`, `MonitorCamaras`, `PuertaAbatible`, `LuzParpadeo`.
+
+**Filtro:** `PixelArtCamera` tiene un parámetro nuevo, `fidelidad` (0 = solo paleta). En el bosque va a 0,45 con tramado 0,25: la paleta tiñe, pero la niebla y el haz de la linterna ya no se rompen en manchas planas. Valdara no cambia (sigue a 0).
+
+**Comprobado en Play:** se sale de la casa por la puerta, se sube la torre entera andando (el paso de escalón de Daniel sube a 0,45 m en esta escena), la E detecta objetos, las notas y el monitor se ven bien, sin errores en consola.
+
+**Avisos de estética:**
+- La casa es una cabaña de troncos. **Josemi la aprobó así el 19/11/2026 («me gusta así la casa»): no cambiarle las texturas a cal y teja.**
+- El coche es una ranchera tipo pickup; encaja regular en la España de finales de los 80.
+- Generador, radio y televisor son modelos realistas (Tripo / Poly Haven) dentro de un entorno PSX; el filtro los iguala, pero son de otra fuente.
+- Licencia: los modelos del pack son CC0; confirmar las texturas antes de subirlas a un repositorio público.
+
+**Capturas:** [casa sin luz](../capturas/bosque_10_casa_sin_luz.png), [silueta en el sendero](../capturas/bosque_11_sendero_silueta-1.png), [torre](../capturas/bosque_12_torre.png), [torre encendida](../capturas/bosque_14_torre_encendida.png), [generador](../capturas/bosque_15_generador.png), [nota](../capturas/bosque_16_nota.png), [monitor CAM 03](../capturas/bosque_17_monitor_cam03.png).
+
+---
+
 ## Dónde lo dejamos (17/11/2026, noche)
 
 - **Para jugar:** abrir el proyecto en Unity y pulsar Play. Arranca siempre `TorreDaniel` en la puerta de Daniel (menú THE FOG > Play arranca el juego). WASD, ratón, Mayús para correr, Esc suelta el ratón, F1 ayuda.
-- **GitHub:** todo subido a `main` (commit `c162700`).
-- **Blender:** el fuente del farol está en `ArtSource/Blender/FarolFernandino.blend`. Para trabajar con Blender desde Claude: abrir Blender 5.2 (el addon MCP arranca solo) y Unity con el servidor MCP en marcha (Window > MCP for Unity > Start Server).
+- **GitHub:** todo subido a `main`.
+- **Capturas para el grupo** (en Play, con el filtro): [docs/capturas](../capturas/).
+- **Blender:** el fuente del farol está en `ArtSource/Blender/FarolFernandino.blend`. Para trabajar con Blender desde Claude: abrir Blender 5.2 (el addon MCP arranca solo) y Unity; el servidor MCP de Unity arranca solo al abrir el editor (MCP for Unity > Advanced > Auto-start on load, activado el 17/11).
 - **Siguiente, a elegir:** interiores jugables del pueblo (bar, casa de Fred, ayuntamiento); afueras (huertos, corrales, cementerio, boca de mina); detalle de calle (cables entre fachadas, bancos, macetas); amueblar la casa de Daniel; caseta de la torre jugable; primer trozo de juego (bucle de partida).
 
 ---

@@ -15,7 +15,16 @@ namespace TheFog.EditorTools.Entorno
         const string Pref = "TheFog.PlayArrancaJuego";
         const string Menu = "THE FOG/Play arranca el juego";
 
-        static PlayArrancaJuego() => EditorApplication.delayCall += Aplicar;
+        // Escenas de entorno que se prueban tal cual: con una de estas abierta, Play arranca en ella.
+        static readonly string[] Propias = { "Assets/Scenes/Bosque.unity" };
+
+        static PlayArrancaJuego()
+        {
+            EditorApplication.delayCall += Aplicar;
+            EditorSceneManager.activeSceneChangedInEditMode += (a, b) => Aplicar();
+            EditorSceneManager.sceneOpened += (s, m) => Aplicar();
+            EditorSceneManager.sceneSaved += s => Aplicar();
+        }
 
         static bool Activo
         {
@@ -25,7 +34,8 @@ namespace TheFog.EditorTools.Entorno
 
         static void Aplicar()
         {
-            EditorSceneManager.playModeStartScene = Activo ? AssetDatabase.LoadAssetAtPath<SceneAsset>(Escena) : null;
+            bool propia = System.Array.IndexOf(Propias, EditorSceneManager.GetActiveScene().path) >= 0;
+            EditorSceneManager.playModeStartScene = Activo && !propia ? AssetDatabase.LoadAssetAtPath<SceneAsset>(Escena) : null;
         }
 
         [MenuItem(Menu)]

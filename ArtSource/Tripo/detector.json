@@ -1,0 +1,1 @@
+{"task_id":"a7dbc5c3-8fa0-4c91-bf1f-1b936e1b6251","type":"image_to_model","status":"success","credits_consumed":30,"output_dir":"detector\\tripo-out\\t3-detector-a7dbc5c3","files":["model.glb","rendered_image.webp","preview.png"],"model_file":"detector\\tripo-out\\t3-detector-a7dbc5c3\\model.glb","preview":"detector\\tripo-out\\t3-detector-a7dbc5c3\\preview.png"}

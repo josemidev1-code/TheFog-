@@ -10,6 +10,7 @@ Shader "TheFog/PixelPaleta"
         _Brillo ("Brillo previo", Range(0.5, 2)) = 1
         _Contraste ("Contraste previo", Range(0.5, 2)) = 1
         _Vineta ("Viñeta", Range(0, 1)) = 0.35
+        _Fidelidad ("Mezcla con el color original", Range(0, 1)) = 0
     }
     SubShader
     {
@@ -25,7 +26,7 @@ Shader "TheFog/PixelPaleta"
 
             sampler2D _MainTex; float4 _MainTex_TexelSize;
             sampler2D _Lut;
-            float _Tramado, _Brillo, _Contraste, _Vineta;
+            float _Tramado, _Brillo, _Contraste, _Vineta, _Fidelidad;
 
             struct appdata { float4 vertex : POSITION; float2 uv : TEXCOORD0; };
             struct v2f { float4 pos : SV_POSITION; float2 uv : TEXCOORD0; };
@@ -54,10 +55,12 @@ Shader "TheFog/PixelPaleta"
                 c *= _Brillo;
                 float2 d = i.uv - 0.5;
                 c *= 1.0 - _Vineta * saturate(dot(d, d) * 2.2);
+                float3 original = saturate(c);
                 int idx = (int)(fmod(px.y, 4.0)) * 4 + (int)(fmod(px.x, 4.0));
                 c += (bayer[idx] / 16.0 - 0.5) * _Tramado * (32.0 / 255.0);
                 // La paleta ya está en gamma y el lienzo de pantalla se escribe tal cual: no convertir.
-                return fixed4(Lut(c), 1);
+                // Fidelidad > 0: la paleta tiñe pero no aplasta los degradados (niebla, haz de la linterna).
+                return fixed4(lerp(Lut(c), original, _Fidelidad), 1);
             }
             ENDCG
         }

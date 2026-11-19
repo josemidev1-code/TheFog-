@@ -1,0 +1,26 @@
+[1m── Plan ──────────────────────────[22m
+input: ref/detector_abuelo.png
+model: v3.1-20260211[2m — explicit --model[22m
+steps:
+  1. image-to-model  [2mPOST /v3/generation/image-to-model[22m — generate a 3D model from one image
+[2m     pbr=false model="v3.1-20260211"[22m
+deliverables: GLB
+cost impact:
+  · estimated generation cost: 30 credits (official list price)
+[1m──────────────────────────────────[22m
+model: v3.1-20260211 (explicit --model)
+task created a7dbc5c3-8fa0-4c91-bf1f-1b936e1b6251 (@t3-detector)
+image_to_model · queued
+image_to_model · running 5% · a7dbc5c3
+image_to_model · running 9% · a7dbc5c3
+image_to_model · running 15% · a7dbc5c3
+image_to_model · running 23% · a7dbc5c3
+image_to_model · running 35% · a7dbc5c3
+image_to_model · running 53% · a7dbc5c3
+image_to_model · running 76% · a7dbc5c3
+image_to_model · running 99% · a7dbc5c3
+image_to_model · success 100% · a7dbc5c3
+[32m✓[39m image_to_model · a7dbc5c3-8fa0-4c91-bf1f-1b936e1b6251 · 30 credits
+downloading artifacts…
+downloading rendered_image.webp
+[32m✓[39m artifacts saved to detector\tripo-out\t3-detector-a7dbc5c3
