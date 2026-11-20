@@ -1,0 +1,43 @@
+VÍDEO DEL INFORMATIVO (THE FOG, primera versión jugable)
+
+Pon aquí noticia_valdara.mp4 (el informativo de Cadena Regional).
+Si existe, el juego lo reproduce al mirar la tele y usa su sonido; si no, se ven los rótulos de la cadena con subtítulos.
+
+Nombre exacto del archivo:  noticia_valdara.mp4
+Carpeta exacta:             Assets/StreamingAssets/Video/
+Formato aconsejado:         MP4 (H.264 + AAC), 4:3, baja resolución (el juego lo enseña a 320 x 240 con píxel gordo).
+Duración:                   65 segundos (el juego corta el vídeo a los 65,1 s, cuando acaba la última frase).
+
+TIEMPOS (medidos desde que arranca el vídeo). Los subtítulos del juego salen en estos segundos, así que el locutor
+tiene que decir cada frase en su tramo:
+
+   0,00 -  3,60   Sintonía y cabecera de la cadena (sin locutor)
+   3,60 -  8,95   «Buenas noches. Cadena Regional, última edición del informativo.»
+   8,95 - 15,80   «La feria de ganado de San Martín ha cerrado hoy con más de mil reses vendidas.»
+  15,80 - 22,15   «Los ganaderos se quejan del precio: el ternero se pagó peor que hace un año.»
+  22,15 - 29,00   «El coche de línea de la sierra cambia de horario el lunes. Saldrá a las siete.»
+  29,00 - 35,85   «En Valdara, varios vecinos han dado aviso de temblores leves durante la noche.»
+  35,85 - 42,70   «La concesionaria de la antigua mina los atribuye al asiento de galerías viejas.»
+  42,70 - 49,05   «La empresa insiste: en la galería clausurada no se realiza trabajo alguno.»
+  49,05 - 54,90   «El tiempo. Nieblas densas en los valles a partir de la medianoche.»
+  54,90 - 60,75   «Se recomienda no circular de madrugada por las carreteras de montaña.»
+  60,75 - 65,10   «Es todo por hoy. Que tengan ustedes buenas noches.»
+  65,10           Fin: el juego para el vídeo y pone la nieve de «Despedida y cierre».
+
+Los textos exactos están en Assets/Scripts/Entorno/BosqueGuion.cs (tabla «Noticia»). Si el vídeo dice otra cosa o a
+otro ritmo, hay que cambiar allí los textos y los segundos de cada línea para que los subtítulos coincidan.
+La cadena es inventada («Cadena Regional»): no usar logotipos ni nombres de cadenas reales.
+
+DOS LIMITACIONES CONOCIDAS
+
+1. Con el televisor provisional (television_02, de Poly Haven) el vídeo solo se ve en la pantalla de «mirar la tele»
+   (acercarse y pulsar E). Ese modelo no tiene una malla llamada «Pantalla…» ni emisión propia, así que de lejos la tele
+   parece apagada salvo por la luz azulada que echa. Se arregla sola cuando exista el modelo televisor_80 con una pieza
+   cuyo nombre empiece por «Pantalla».
+
+2. El proyecto tiene activado «Strip Engine Code». Si el juego se compila con IL2CPP, Unity puede eliminar del
+   ejecutable el reproductor de vídeo, porque el juego lo usa solo por reflexión. Cuando exista el vídeo y se vaya a
+   compilar un ejecutable, hay que añadir un archivo Assets/link.xml que conserve el ensamblado UnityEngine.VideoModule.
+   Dentro del editor (Play) no hace falta.
+
+Nada de esto se ha podido probar todavía: el hueco del vídeo se ha escrito sin poder abrir Unity.

@@ -6,6 +6,9 @@ EditorBuildSettings:
   serializedVersion: 2
   m_Scenes:
   - enabled: 1
+    path: Assets/Scenes/Bosque.unity
+    guid: 30e76d97dac173648bdfca59b4b7bd72
+  - enabled: 1
     path: Assets/Scenes/TorreDaniel.unity
     guid: 3b9946e76082a7b4f98bb86167b2659a
   - enabled: 1

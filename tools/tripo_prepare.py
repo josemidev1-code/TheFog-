@@ -20,6 +20,8 @@ from mathutils import Matrix, Vector
 argv = sys.argv[sys.argv.index("--") + 1:]
 src, out_dir, name, target_tris, height = argv[0], argv[1], argv[2], int(argv[3]), float(argv[4])
 big = len(argv) > 5 and argv[5].lower() == "grande"
+# "ligero": el modelo ya viene con pocos polígonos y sus propias texturas; solo se escala, se centra y se exporta.
+light = len(argv) > 5 and argv[5].lower() == "ligero"
 tex_base = name + ("_Grande" if big else "")
 bake_size = 2048
 out_dir = os.path.abspath(out_dir)
@@ -58,7 +60,7 @@ high = obj.copy()
 high.data = obj.data.copy()
 bpy.context.collection.objects.link(high)
 
-if before > target_tris:
+if before > target_tris and not light:
     mod = obj.modifiers.new("Reducir", "DECIMATE")
     mod.decimate_type = "COLLAPSE"
     mod.ratio = target_tris / before
@@ -71,9 +73,10 @@ after = tri_count(obj)
 bpy.ops.object.select_all(action="DESELECT")
 obj.select_set(True)
 bpy.context.view_layer.objects.active = obj
-if obj.data.has_custom_normals:
-    bpy.ops.mesh.customdata_custom_splitnormals_clear()
-bpy.ops.object.shade_smooth_by_angle(angle=1.0472)  # 60°
+if not light:
+    if obj.data.has_custom_normals:
+        bpy.ops.mesh.customdata_custom_splitnormals_clear()
+    bpy.ops.object.shade_smooth_by_angle(angle=1.0472)  # 60°
 
 # Material propio para la versión ligera (la copia alta conserva el original).
 src_mat = obj.data.materials[0]
@@ -87,43 +90,47 @@ for n in nodes:
         n.image.name = tex_base + "_Color"
 
 # --- Horneado del relieve: malla original -> malla ligera ---
-normal_img = bpy.data.images.new(tex_base + "_Normal", bake_size, bake_size, alpha=False, float_buffer=False)
-normal_img.colorspace_settings.name = "Non-Color"
-bake_node = nodes.new("ShaderNodeTexImage")
-bake_node.image = normal_img
-bake_node.interpolation = "Linear"
-for n in nodes:
-    n.select = False
-bake_node.select = True
-nodes.active = bake_node
+def hornear_relieve():
+    normal_img = bpy.data.images.new(tex_base + "_Normal", bake_size, bake_size, alpha=False, float_buffer=False)
+    normal_img.colorspace_settings.name = "Non-Color"
+    bake_node = nodes.new("ShaderNodeTexImage")
+    bake_node.image = normal_img
+    bake_node.interpolation = "Linear"
+    for n in nodes:
+        n.select = False
+    bake_node.select = True
+    nodes.active = bake_node
 
-scene = bpy.context.scene
-scene.render.engine = "CYCLES"
-scene.cycles.device = "CPU"
-scene.cycles.samples = 1
-dims0 = obj.dimensions
-size0 = max(dims0.x, dims0.y, dims0.z)
-bake = scene.render.bake
-bake.use_selected_to_active = True
-bake.cage_extrusion = 0.01 * size0
-bake.max_ray_distance = 0.03 * size0
-bake.margin = 8
-bake.normal_space = "TANGENT"
+    scene = bpy.context.scene
+    scene.render.engine = "CYCLES"
+    scene.cycles.device = "CPU"
+    scene.cycles.samples = 1
+    dims0 = obj.dimensions
+    size0 = max(dims0.x, dims0.y, dims0.z)
+    bake = scene.render.bake
+    bake.use_selected_to_active = True
+    bake.cage_extrusion = 0.01 * size0
+    bake.max_ray_distance = 0.03 * size0
+    bake.margin = 8
+    bake.normal_space = "TANGENT"
 
-bpy.ops.object.select_all(action="DESELECT")
-high.select_set(True)
-obj.select_set(True)
-bpy.context.view_layer.objects.active = obj
-bpy.ops.object.bake(type="NORMAL")
-normal_img.filepath_raw = os.path.join(out_dir, tex_base + "_Normal.png")
-normal_img.file_format = "PNG"
-normal_img.save()
+    bpy.ops.object.select_all(action="DESELECT")
+    high.select_set(True)
+    obj.select_set(True)
+    bpy.context.view_layer.objects.active = obj
+    bpy.ops.object.bake(type="NORMAL")
+    normal_img.filepath_raw = os.path.join(out_dir, tex_base + "_Normal.png")
+    normal_img.file_format = "PNG"
+    normal_img.save()
 
-# Conecta el mapa de normales al material para que se exporte.
-nmap = nodes.new("ShaderNodeNormalMap")
-links.new(bake_node.outputs["Color"], nmap.inputs["Color"])
-links.new(nmap.outputs["Normal"], bsdf.inputs["Normal"])
+    # Conecta el mapa de normales al material para que se exporte.
+    nmap = nodes.new("ShaderNodeNormalMap")
+    links.new(bake_node.outputs["Color"], nmap.inputs["Color"])
+    links.new(nmap.outputs["Normal"], bsdf.inputs["Normal"])
 
+
+if not light:
+    hornear_relieve()
 bpy.data.objects.remove(high, do_unlink=True)
 
 # Escala a la altura real (Blender: Z arriba) y pivote en el centro de la base.

@@ -8,8 +8,8 @@ using UnityEngine.Rendering;
 namespace TheFog.EditorTools.Entorno
 {
     /// <summary>
-    /// Lo que hay construido en el bosque: la casa de Daniel (claro central), la torre de vigilancia con la cabina
-    /// de comunicaciones (claro del oeste), el generador al pie de la torre y el tendido de postes entre ambas.
+    /// Lo que hay construido en el bosque: la casa de Daniel (claro central) con el generador en el costado de la leñera,
+    /// la torre de vigilancia con la cabina de comunicaciones (claro del oeste) y el tendido de postes entre ambas.
     /// Casa, torre y muebles salen del mismo pack que el bosque (Elbolilloduro, CC0), así todo comparte estilo.
     /// </summary>
     public static partial class BosqueBuilder
@@ -63,74 +63,96 @@ namespace TheFog.EditorTools.Entorno
             // La silla suelta del pack se quita: las dos sillas se colocan más abajo, cada una mirando a lo suyo.
             Quitar(casa, "Cube_031");
             // La cocina ocupa la pared de la ventana (encimera con fregadero y cocina de gas, sacadas de la cabina de la torre):
-            // la estantería sobra y la cómoda del aparato pasa a la pared del fondo, entre la cocina y la cama.
+            // la estantería del pack sobra.
             Quitar(casa, "shelve_003");
-            Recolocar(casa, "drawer_01_003", 90f, new Vector2(-3.19f, -0.70f));
+            // Cama, mesilla y cómoda del pack: en su lugar van los muebles que hizo Josemi en Tripo (cama de hierro,
+            // mesita con despertador y librería), colocados más abajo.
+            foreach (var pieza in new[] { "Bed_003", "drawer_003", "drawer_d_003", "drawer_01_003" }) Quitar(casa, pieza);
             var puertaCasa = casa.transform.Cast<Transform>().First(t => t.name.StartsWith("Door"));
             Vector3 frente = Vector3.ProjectOnPlane(Limites(puertaCasa.gameObject).center - Limites(casa).center, Vector3.up).normalized;
             Vector3 quiero = new Vector3(-CasaPos.x, 0f, -CasaPos.y).normalized; // la puerta mira al cruce de senderos
             casa.transform.rotation = Quaternion.FromToRotation(frente, quiero);
             Colisiones(casa);
             Puerta(casa, puertaCasa);
-            Electrica(Luz("Luz interior", casa.transform, casa.transform.position + Vector3.up * 2.3f, new Color(1f, 0.70f, 0.40f), 3.4f, 8f, true));
+            var lInterior = Luz("Luz interior", casa.transform, casa.transform.position + Vector3.up * 2.3f, new Color(1f, 0.70f, 0.40f), 3.4f, 8f, true);
+            Electrica(lInterior);
             // Sin corriente, lo único que alumbra dentro son las brasas de la estufa.
             Luz("Brasas", casa.transform, casa.transform.TransformPoint(new Vector3(0.48f, 0.5f, 1.2f)), new Color(1f, 0.42f, 0.16f), 0.9f, 4.2f, true)
                 .gameObject.AddComponent<LuzParpadeo>().cantidad = 0.35f;
             Vector3 fuera = casa.transform.position + quiero * 5.2f;
-            Electrica(Luz("Luz porche", casa.transform, casa.transform.position + quiero * 3.6f + Vector3.up * 2.3f, new Color(1f, 0.78f, 0.5f), 4f, 9f, true));
+            var lPorche = Luz("Luz porche", casa.transform, casa.transform.position + quiero * 3.6f + Vector3.up * 2.3f, new Color(1f, 0.78f, 0.5f), 4f, 9f, true);
+            Electrica(lPorche);
             // Daniel empieza dentro, junto a la cama, mirando a la puerta.
             Vector3 ini = casa.transform.TransformPoint(new Vector3(-1.5f, 0f, -0.3f));
             inicioDaniel = new Vector2(ini.x, ini.z);
             miraDaniel = new Vector2(fuera.x, fuera.z);
             Physics.SyncTransforms();
 
-            // Interior: mesa con la radio, silla, garrafa junto a la puerta, cosas de vivir ahí.
+            // Interior: escritorio con la radio, sillas, la tele sobre la encimera, cosas de vivir ahí.
             var dentro = Group(casa.transform, "Enseres");
             Dentro(EdifDir + "Prop_Cocina.fbx", dentro, casa, new Vector3(-2.25f, SueloCasa, -1.865f), 0f, true).name = "Cocina";
             Dentro(EdifDir + "Prop_Cocina_Gas.fbx", dentro, casa, new Vector3(-0.655f, SueloCasa, -1.945f), 90f, true).name = "Cocina de gas";
-            Dentro(EdifDir + "Prop_Table.fbx", dentro, casa, new Vector3(0.45f, SueloCasa, -2.0f), 90f, true);
-            Silla(dentro, casa, new Vector2(0.35f, -1.34f), new Vector2(0.32f, -2.0f));  // sentado a la radio
+            // Muebles de Josemi (Tripo, preparados con tools/tripo_prepare_usuario.sh). Con giro 0 miran hacia la pared del fondo.
+            var cama = Mueble("cama", dentro, casa, new Vector3(-2.84f, SueloCasa, 1.36f), 0f, true);    // cabecero contra la pared de la ventana
+            cama.name = "Cama";
+            Accion(cama, BosqueGuion.RotCama, "cama");
+            Mueble("mesita_noche", dentro, casa, new Vector3(-1.93f, SueloCasa, 2.11f), -90f, true);
+            Mueble("libreria", dentro, casa, new Vector3(-3.28f, SueloCasa, -0.75f), 180f, true);      // pared del fondo, entre la cocina y la cama
+            Mueble("planta_colgante", dentro, casa, new Vector3(-3.24f, 1.38f, -0.42f), 0f, false);   // la maceta, sobre la librería
+            Mueble("escritorio", dentro, casa, new Vector3(0.5f, SueloCasa, -1.935f), 90f, true);       // el rincón de la radio
+            Mueble("corcho", dentro, casa, new Vector3(0.5f, 1.15f, -2.31f), 90f, false);               // en la pared, sobre el escritorio
+            Mueble("radiador", dentro, casa, new Vector3(-0.8f, SueloCasa, 2.225f), -90f, true);        // bajo la ventana
+            var ventana = Mueble("ventana_cortinas", dentro, casa, new Vector3(-0.8f, 0.955f, 2.145f), -90f, false); // por dentro, tapando la ventana del pack
+            ventana.transform.localScale *= 1.16f;
+            ventana.name = "Ventana";
+            Accion(ventana, BosqueGuion.RotVentana, "ventana");
+            Mueble("alfombra", dentro, casa, new Vector3(-1.0f, SueloCasa, 0.2f), 0f, false);
+            Silla(dentro, casa, new Vector2(0.5f, -1.2f), new Vector2(0.5f, -2.0f));     // sentado a la radio
             Silla(dentro, casa, new Vector2(-0.25f, 1.05f), new Vector2(0.66f, 1.38f));   // frente a la boca de la estufa
             Physics.SyncTransforms();
-            radioCasa = Usable<RadioBosque>(Encima(PolyDir + "vintage_radio_transceiver/vintage_radio_transceiver_1k.gltf", dentro, casa, new Vector3(0.20f, 1.6f, -2.05f), 0f, "Radio de casa"), "escuchar la radio");
-            Encima(EdifDir + "Prop_Cup.fbx", dentro, casa, new Vector3(0.52f, 1.6f, -1.80f), 40f, null);
-            var cuaderno = Encima(EdifDir + "Prop_Documents.fbx", dentro, casa, new Vector3(0.80f, 1.6f, -2.02f), 15f, "Cuaderno del abuelo");
-            Tumbar(cuaderno); // el modelo viene de canto; va tumbado sobre la mesa
+            // El televisor, sobre el tramo liso de la encimera (el otro tramo es el fregadero). Mientras Josemi no haga
+            // «televisor_80» se usa el de Poly Haven (el mismo modelo que el monitor de la torre). La luz azulada la pone el juego.
+            // television_02 mira a +z con giro 0; los modelos de Tripo miran a -x con giro 0, por eso 90.
+            bool tvPropia = Hay(Tripo("televisor_80"));
+            var tele = Apoyado(tvPropia ? Tripo("televisor_80") : PolyDir + "television_02/television_02_1k.gltf", dentro, casa,
+                new Vector3(-1.60f, SueloCasa + 0.92f, -1.95f), tvPropia ? 90f : 0f, "Televisor");
+            Accion(tele, BosqueGuion.RotTeleMirar, "tele");
+            radioCasa = Usable<RadioBosque>(Encima(TripoDir + "radio_antigua/radio_antigua.gltf", dentro, casa, new Vector3(0.45f, 1.6f, -2.0f), 0f, "Radio de casa"), BosqueGuion.RotRadioEscuchar);
+            Encima(EdifDir + "Prop_Cup.fbx", dentro, casa, new Vector3(-0.05f, 1.6f, -2.12f), 40f, null);
+            var cuaderno = Encima(EdifDir + "Prop_Documents.fbx", dentro, casa, new Vector3(0.05f, 1.6f, -1.82f), 15f, "Cuaderno del abuelo");
+            Tumbar(cuaderno); // el modelo viene de canto; va tumbado sobre el escritorio
             Nota(cuaderno, "leer el cuaderno", "Cuaderno del abuelo",
                 "La encontramos a unos cuarenta metros de la galería vieja. No parecía una veta. Tampoco parecía una piedra.\n\nJulián quiso romper un trozo con el pico. Le dije que esperara.\n\nEsta mañana han cerrado la mina.\n\nDicen que volveremos a trabajar el lunes. Nadie ha explicado qué van a sacar mientras tanto.", false);
-            // Sobre la cómoda: el aparato que hizo el abuelo (modelo exclusivo: imagen de ChatGPT → Tripo).
-            const string detector = TripoDir + "detector/detector.gltf";
-            if (AssetDatabase.LoadAssetAtPath<GameObject>(detector) != null)
-                Nota(Encima(detector, dentro, casa, new Vector3(-3.19f, 1.5f, -0.70f), 160f, "Detector del abuelo"), "mirar el aparato", "Aparato del abuelo",
-                    "Una caja de chapa verde con un medidor de aguja y una sonda al final de un cable. Lo hizo el abuelo con piezas de otras cosas. Nunca explicó qué medía.\n\nAcercas la sonda a la ventana: la aguja no se mueve.\n\nTe la acercas a la mano.\n\nSe mueve. Solo un poco.", false);
-            else
-                Encima(EdifDir + "Prop_Book.fbx", dentro, casa, new Vector3(-3.19f, 1.5f, -0.70f), 160f, null);
-            var lin = Usable<Recogible>(Encima(EdifDir + "Prop_flashlight.fbx", dentro, casa, new Vector3(-2.0f, 1.2f, 2.1f), 30f, "Linterna"), "coger la linterna");
-            if (lin != null) lin.clave = "linterna";
+            // En el escritorio, sobre el tapete: el aparato que hizo el abuelo (modelo exclusivo: imagen de ChatGPT → Tripo).
+            Nota(Encima(TripoDir + "detector/detector.gltf", dentro, casa, new Vector3(1.0f, 1.6f, -1.98f), 160f, "Detector del abuelo"), "mirar el aparato", "Aparato del abuelo",
+                "Una caja de chapa verde con un medidor de aguja y una sonda al final de un cable. Lo hizo el abuelo con piezas de otras cosas. Nunca explicó qué medía.\n\nAcercas la sonda a la ventana: la aguja no se mueve.\n\nTe la acercas a la mano.\n\nSe mueve. Solo un poco.", false);
+            // Modelos de Josemi que aún pueden no existir (diario, walkie, mapa, interruptor, cuadro, bombilla, aplique).
+            Physics.SyncTransforms();
+            Opcionales(dentro, casa, lInterior, lPorche, quiero);
+            // La linterna, en la mesita, al lado del despertador (el tablero queda a 0,61 m; el reloj forma parte del modelo).
+            var lin = Usable<Recogible>(Mueble("linterna", dentro, casa, new Vector3(-1.88f, SueloCasa + 0.61f, 2.02f), 60f, false), BosqueGuion.RotLinterna);
+            if (lin != null) { lin.name = "Linterna"; lin.clave = "linterna"; }
             Dentro(EdifDir + "Prop_teapot.fbx", dentro, casa, new Vector3(0.91f, 1.01f, 1.63f), 65f, false); // sobre la plancha de la estufa
-            var garrafa = Dentro(PolyDir + "plastic_jerrycan/plastic_jerrycan_1k.gltf", dentro, casa, new Vector3(1.35f, SueloCasa, -0.95f), 100f, true);
-            garrafa.name = "Garrafa de combustible";
-            Usable<Recogible>(garrafa, "coger la garrafa").clave = "garrafa";
-            // Leña apilada contra la pared, al lado de la estufa; la mochila, apoyada entre la mesilla y la leña.
+            // Leña apilada contra la pared, al lado de la estufa; la mochila, apoyada en la pared del fondo, entre la librería y la cama.
             Dentro(EdifDir + "Prop_firewood_01.fbx", dentro, casa, new Vector3(0.30f, SueloCasa, 2.20f), 90f, false);
-            Dentro(EdifDir + "Prop_firewood.fbx", dentro, casa, new Vector3(-0.42f, SueloCasa, 2.14f), 80f, false);
-            Dentro(EdifDir + "Prop_Backpack.fbx", dentro, casa, new Vector3(-1.25f, SueloCasa, 2.12f), 200f, false);
+            Dentro(EdifDir + "Prop_Backpack.fbx", dentro, casa, new Vector3(-3.30f, SueloCasa, 0.08f), 110f, false);
             // Sobre la encimera y la cocina: lo de comer y los cacharros, con modelos del mismo pack.
             const float enc = SueloCasa + 0.92f, gas = SueloCasa + 1.01f;
             Dentro(EdifDir + "Prop_dishes.fbx", dentro, casa, new Vector3(-2.42f, enc, -1.9f), 0f, false);
             Dentro(EdifDir + "Prop_dishes.fbx", dentro, casa, new Vector3(-2.42f, enc + 0.03f, -1.9f), 25f, false);
             Dentro(EdifDir + "Prop_Cup.fbx", dentro, casa, new Vector3(-2.15f, enc, -1.62f), 110f, false);
             Dentro(EdifDir + "Prop_pot.fbx", dentro, casa, new Vector3(-1.95f, enc, -2.05f), 30f, false);
-            Dentro(EdifDir + "Prop_Food.fbx", dentro, casa, new Vector3(-1.68f, enc, -2.14f), 0f, false);
-            Dentro(EdifDir + "Prop_Food.fbx", dentro, casa, new Vector3(-1.53f, enc, -2.1f), 40f, false);
-            Dentro(EdifDir + "Prop_Food.fbx", dentro, casa, new Vector3(-1.6f, enc + 0.08f, -2.12f), 75f, false);
+            // Las tres latas, delante de los platos: su sitio de antes es ahora el del televisor.
+            Dentro(EdifDir + "Prop_Food.fbx", dentro, casa, new Vector3(-2.47f, enc, -1.60f), 0f, false);
+            Dentro(EdifDir + "Prop_Food.fbx", dentro, casa, new Vector3(-2.32f, enc, -1.57f), 40f, false);
+            Dentro(EdifDir + "Prop_Food.fbx", dentro, casa, new Vector3(-2.40f, enc + 0.08f, -1.585f), 75f, false);
             Dentro(EdifDir + "Prop_Water_bottle.fbx", dentro, casa, new Vector3(-1.3f, enc, -2.15f), 0f, false);
             Dentro(EdifDir + "Prop_Water_bottle.fbx", dentro, casa, new Vector3(-1.19f, enc, -2.1f), 50f, false);
             Dentro(EdifDir + "Prop_canteen.fbx", dentro, casa, new Vector3(-2.2f, enc, -2.16f), 95f, false);
             Dentro(EdifDir + "Prop_Matches.fbx", dentro, casa, new Vector3(-1.2f, enc, -1.62f), 25f, false);
             Dentro(EdifDir + "Prop_frying_pan.fbx", dentro, casa, new Vector3(-0.66f, gas, -1.9f), 35f, false);
-            Dentro(EdifDir + "Prop_tray.fbx", dentro, casa, new Vector3(1.35f, SueloCasa, -2.0f), 0f, false); // el cubo, en el rincón
-            Nota(Dentro(EdifDir + "Prop_calendar.fbx", dentro, casa, new Vector3(-3.52f, 1.32f, -0.70f), 0f, false), "mirar el calendario", "Calendario",
+            Dentro(EdifDir + "Prop_tray.fbx", dentro, casa, new Vector3(1.58f, SueloCasa, -2.08f), 0f, false); // el cubo, en el rincón
+            Nota(Dentro(EdifDir + "Prop_calendar.fbx", dentro, casa, new Vector3(-3.52f, 1.32f, 0.08f), 0f, false), "mirar el calendario", "Calendario",
                 "Las últimas noches están tachadas. La de hoy, todavía no.", true);
             Nota(Dentro(EdifDir + "Prop_Photos.fbx", dentro, casa, new Vector3(-3.52f, 1.55f, 1.25f), 0f, false), "mirar la foto", "Fotografía",
                 "Mina de Valdara. Nueve hombres en la bocamina, con los cascos en la mano. El abuelo es el segundo por la izquierda.\n\nDetrás, a lápiz:\n«Galería vieja. El último día que bajamos todos.»", false);
@@ -143,6 +165,9 @@ namespace TheFog.EditorTools.Entorno
             Prop(TripoDir + "carro/carro.gltf", alrededor, En(CasaPos, quiero, lado, -3f, -8.5f), Yaw(quiero) + 70f, 1f, true, 2.5f);
             Nota(Prop(EdifDir + "Coche.fbx", alrededor, En(CasaPos, quiero, lado, 9.5f, 6.5f), Yaw(quiero) + 160f, 1f, true, 3f), "mirar la furgoneta", "",
                 "No arranca desde el martes. La batería estaba bien.", true);
+            // El bidón de gasolina, fuera, junto a la furgoneta (a la vista desde el porche, a 1,5 m de su costado).
+            var bidon = Prop(TripoDir + "bidon/bidon.gltf", alrededor, En(CasaPos, quiero, lado, 8.6f, 3.9f), 35f, 1f, true, 0.4f);
+            if (bidon != null) { bidon.name = "Garrafa de combustible"; Usable<Recogible>(bidon, BosqueGuion.RotBidon).clave = "garrafa"; }
             // La pala, apoyada en la pared del lado de la leñera (inclinada hasta tocar los troncos).
             {
                 var pala = Prop(EdifDir + "Prop_Shovel.fbx", alrededor, En(CasaPos, quiero, lado, 0.6f, 2.72f + 0.27f), 0f, 1f, false, 0.3f);
@@ -167,7 +192,10 @@ namespace TheFog.EditorTools.Entorno
             var puesto = Group(torre.transform, "Puesto de comunicaciones");
             Dentro(EdifDir + "Prop_Banco_Torre.fbx", puesto, torre, new Vector3(0.76f, 17.73f, -2.765f), 0f, true).name = "Banco de trabajo";
             Physics.SyncTransforms();
-            radioTorre = Usable<RadioBosque>(Encima(PolyDir + "vintage_radio_transceiver/vintage_radio_transceiver_1k.gltf", puesto, torre, new Vector3(0.58f, 20.2f, -2.85f), 0f, "Emisora de la torre"), "usar la emisora");
+            // La emisora de Josemi cuando exista («emisora», mira a -x: giro 90); mientras tanto, la de Poly Haven.
+            bool emPropia = Hay(Tripo("emisora"));
+            string em = emPropia ? Tripo("emisora") : PolyDir + "vintage_radio_transceiver/vintage_radio_transceiver_1k.gltf";
+            radioTorre = Usable<RadioBosque>(Encima(em, puesto, torre, new Vector3(0.58f, 20.2f, -2.85f), emPropia ? 90f : 0f, "Emisora de la torre"), BosqueGuion.RotEmisoraUsar);
             if (radioTorre != null) radioTorre.deTorre = true;
             var monitor = Usable<MonitorCamaras>(Encima(PolyDir + "television_02/television_02_1k.gltf", puesto, torre, new Vector3(-0.12f, 20.2f, -2.9f), 0f, "Monitor de camaras"), "mirar las cámaras");
             var parte = torre.transform.Cast<Transform>().FirstOrDefault(t => t.name.StartsWith("Documents"));
@@ -184,29 +212,26 @@ namespace TheFog.EditorTools.Entorno
             var lCabina = Luz("Luz cabina", torre.transform, new Vector3(cb.center.x, cb.max.y + 0.2f, cb.center.z), new Color(1f, 0.72f, 0.42f), 7f, 12f, true);
             var lPie = Luz("Luz pie de torre", torre.transform, torre.transform.position + new Vector3(0f, 3.2f, 0f), new Color(0.95f, 0.8f, 0.55f), 6f, 15f, true);
 
-            // Generador al pie de la torre, con sus bidones.
+            // Generador de la casa del guarda, en el costado de la leñera: da corriente a la casa, al sendero y a la torre.
+            // Es el modelo de Josemi (el generador anterior sigue en Tripo/generador por si se quiere volver).
             var gen = Group(root, "Generador");
-            Vector2 g = TorrePos + new Vector2(7.6f, 6.8f);
-            generadorGo = Prop(TripoDir + "generador/generador.gltf", gen, g, -70f, 1.5f, true, 1.2f);
-            taken.Add(new Vector3(g.x, g.y, 6f)); // sin matas encima de los bidones
-            Prop(EdifDir + "Prop_fuel_tank.fbx", gen, g + new Vector2(0.9f, 0.5f), 30f, 1f, true, 0.4f);
-            Prop(EdifDir + "Prop_fuel_tank.fbx", gen, g + new Vector2(1.2f, -0.1f), -50f, 1f, true, 0.4f);
-            Prop(PolyDir + "plastic_jerrycan/plastic_jerrycan_1k.gltf", gen, g + new Vector2(-0.8f, 0.7f), 110f, 1f, true, 0.4f);
-            Prop(EdifDir + "Prop_toolbox.fbx", gen, g + new Vector2(0.2f, -0.9f), 12f, 1f, false, 0.3f);
-            // Orden en que vuelve la luz al arrancar: generador, pie de torre, cabina, y por el tendido hasta la casa.
-            var lGen = Luz("Luz generador", gen, Suelo(g, 0f) + Vector3.up * 1.6f, new Color(1f, 0.75f, 0.45f), 3f, 7f, false);
-            var deCasa = lucesGenerador.ToArray();
-            lucesGenerador.Clear();
-            Electrica(lGen); Electrica(lPie); Electrica(lCabina);
-            foreach (var l in deCasa) Electrica(l);
-            lCabina.gameObject.AddComponent<LuzParpadeo>().cantidad = 0.08f;
-            if (generadorGo != null)
-            {
-                var gb = generadorGo.AddComponent<GeneradorBosque>();
-                gb.luces = lucesGenerador.ToArray();
-                gb.cristales = torre.GetComponentsInChildren<Renderer>().Concat(casa.GetComponentsInChildren<Renderer>())
-                    .Where(r => r.sharedMaterials.Any(m => m != null && m.name.StartsWith("Glass"))).ToArray();
+            Vector2 g = En(CasaPos, quiero, lado, 1.2f, 4.4f);                       // mundo ≈ (12.62, -3.74), a 1,7 m de la pared
+            generadorGo = Prop(TripoDir + "generador_daniel/generador_daniel.gltf", gen, g, Yaw(quiero) + 20f, 1.3f, true, 1.2f);
+            if (generadorGo == null)
+            {   // sin el modelo no se pone otro: queda un punto usable e invisible para que la partida se pueda acabar
+                generadorGo = new GameObject("FALTA generador_daniel");
+                generadorGo.transform.SetParent(gen, false);
+                generadorGo.transform.position = Suelo(g, 0f);
+                var caja = generadorGo.AddComponent<BoxCollider>(); caja.center = new Vector3(0f, 0.4f, 0f); caja.size = Vector3.one * 0.8f;
             }
+            taken.Add(new Vector3(g.x, g.y, 3f));
+            Prop(EdifDir + "Prop_toolbox.fbx", gen, En(CasaPos, quiero, lado, 0.5f, 5.0f), 12f, 1f, false, 0.3f);
+            var lGen = Luz("Luz generador", gen, Suelo(g, 0f) + Vector3.up * 1.6f, new Color(1f, 0.75f, 0.45f), 3f, 7f, false);
+            var deCasa = lucesGenerador.ToArray();                                   // Luz interior, Luz porche (las dos únicas apuntadas hasta aquí)
+            lCabina.gameObject.AddComponent<LuzParpadeo>().cantidad = 0.08f;
+            var gb = generadorGo.AddComponent<GeneradorBosque>();
+            gb.cristales = torre.GetComponentsInChildren<Renderer>().Concat(casa.GetComponentsInChildren<Renderer>())
+                .Where(r => r.sharedMaterials.Any(m => m != null && m.name.StartsWith("Glass"))).ToArray();
 
             // La silueta: una en el sendero, otra que solo se ve por la cámara de la casa.
             zonaSilueta = Suelo(new Vector2(-34f, 7.5f), 0f);
@@ -230,9 +255,90 @@ namespace TheFog.EditorTools.Entorno
 
             // Tendido de la torre a la casa, siguiendo el ramal: postes y cables (BosqueTendido.cs).
             Tendido(root, casa, torre, quiero);
+
+            // Orden en que vuelve la luz al arrancar el generador: él mismo, la casa, el sendero poste a poste y la torre.
+            // Electrica las deja todas apagadas en la escena guardada; al empezar la partida el juego enciende solo las tres
+            // de la red del pueblo (interior, porche y cabina).
+            lucesGenerador.Clear();
+            Electrica(lGen);
+            foreach (var l in deCasa) Electrica(l);
+            foreach (var l in lucesCamino) Electrica(l);
+            Electrica(lPie); Electrica(lCabina);
+            gb.luces = lucesGenerador.ToArray();
+        }
+
+        /// <summary>
+        /// Modelos de Josemi que todavía pueden no existir. Cada uno se coloca solo si está su archivo
+        /// (Assets/Models/Retro/Tripo/nombre/nombre.gltf): sin modelo no se pone nada ni se sustituye por otro.
+        /// Posiciones provisionales, a ajustar por él. Medidas del muro: la pared de la puerta ocupa x local de 1,62 a 2,06
+        /// (hueco de la puerta en z de -0,43 a 0,55, ventanas en z de ±1,13 a ±2,11); la fachada del generador tiene la cara
+        /// exterior en z ≈ -2,73. Por eso lo de dentro va en x = 1,58, el aplique en x = 2,10 y el cuadro en z = -2,80.
+        /// </summary>
+        static void Opcionales(Transform dentro, GameObject casa, Light lInterior, Light lPorche, Vector3 quiero)
+        {
+            if (Hay(Tripo("diario")))        // sobre el escritorio
+                Accion(Encima(Tripo("diario"), dentro, casa, new Vector3(0.62f, 1.6f, -1.68f), 20f, "Diario"), BosqueGuion.RotDiario, "diario");
+            if (Hay(Tripo("walkie")))        // sobre el escritorio
+                Accion(Encima(Tripo("walkie"), dentro, casa, new Vector3(1.08f, 1.6f, -1.66f), 60f, "Walkie"), BosqueGuion.RotWalkie, "walkie");
+            if (Hay(Tripo("mapa")))
+            {   // pared de la puerta, por dentro, entre la puerta y la ventana
+                var mapa = Dentro(Tripo("mapa"), dentro, casa, new Vector3(1.58f, 1.45f, -0.79f), 0f, false);
+                mapa.name = "Mapa";
+                Accion(mapa, BosqueGuion.RotMapa, "mapa");
+            }
+            if (Hay(Tripo("interruptor")))
+            {   // pared de la puerta, por dentro, al otro lado
+                var interruptor = Dentro(Tripo("interruptor"), dentro, casa, new Vector3(1.58f, 1.25f, 0.84f), 0f, false);
+                interruptor.name = "Interruptor";
+                Accion(interruptor, BosqueGuion.RotInterruptor, "interruptor");
+            }
+            if (Hay(Tripo("cuadro_electrico")))
+            {   // fachada lateral, por fuera, sobre el generador
+                var cuadro = Dentro(Tripo("cuadro_electrico"), dentro, casa, new Vector3(1.2f, 1.35f, -2.80f), -90f, false);
+                cuadro.name = "Cuadro electrico";
+                Accion(cuadro, BosqueGuion.RotCuadro, "cuadro");
+            }
+            if (Hay(Tripo("bombilla")))
+            {   // colgada en el centro de la habitación: la luz de dentro sale de ella
+                var bombilla = Dentro(Tripo("bombilla"), dentro, casa, new Vector3(0f, 2.05f, 0f), 0f, false);
+                bombilla.name = "Bombilla";
+                if (lInterior != null) lInterior.transform.position = Limites(bombilla).center;
+            }
+            if (Hay(Tripo("aplique")))
+            {   // fachada de la puerta, por fuera: la luz del porche sale de 0,25 m delante de él
+                var aplique = Dentro(Tripo("aplique"), dentro, casa, new Vector3(2.10f, 2.0f, 0.84f), 180f, false);
+                aplique.name = "Aplique";
+                if (lPorche != null) lPorche.transform.position = Limites(aplique).center + quiero * 0.25f;
+            }
+        }
+
+        static bool Hay(string path) => AssetDatabase.LoadAssetAtPath<GameObject>(path) != null;
+        static string Tripo(string nombre) => TripoDir + nombre + "/" + nombre + ".gltf";
+
+        /// <summary>Coloca un modelo con su base a la altura local dada (encimera, pared). null si el modelo no existe.</summary>
+        static GameObject Apoyado(string path, Transform parent, GameObject edificio, Vector3 local, float yawLocal, string nombre)
+        {
+            if (!Hay(path)) return null;
+            var go = Dentro(path, parent, edificio, local, yawLocal, false);
+            go.transform.position += Vector3.up * (edificio.transform.TransformPoint(local).y - Limites(go).min.y);
+            if (nombre != null) go.name = nombre;
+            return go;
+        }
+
+        /// <summary>Hace usable un objeto que solo avisa al director del juego (Accionable) con su clave.</summary>
+        static void Accion(GameObject go, string rotulo, string clave)
+        {
+            var a = Usable<Accionable>(go, rotulo);
+            if (a != null) a.clave = clave;
         }
 
         const float SueloCasa = -0.028f; // altura del suelo de tablas respecto al origen de la cabaña
+
+        /// <summary>Un modelo de Tripo (Assets/Models/Retro/Tripo/nombre/nombre.gltf) dentro de un edificio; el pivote está en el centro de la base.</summary>
+        static GameObject Mueble(string nombre, Transform parent, GameObject edificio, Vector3 local, float yawLocal, bool caja)
+        {
+            return Dentro(TripoDir + nombre + "/" + nombre + ".gltf", parent, edificio, local, yawLocal, caja);
+        }
 
         /// <summary>Una silla del pack en el suelo de un edificio, mirando hacia un punto (coordenadas locales x, z).</summary>
         static GameObject Silla(Transform parent, GameObject edificio, Vector2 sitio, Vector2 mira)
@@ -348,7 +454,14 @@ namespace TheFog.EditorTools.Entorno
         static GameObject Dentro(string path, Transform parent, GameObject edificio, Vector3 local, float yawLocal, bool caja)
         {
             var prefab = AssetDatabase.LoadAssetAtPath<GameObject>(path);
-            if (prefab == null) { Debug.LogWarning("[Bosque] Falta el modelo " + path); return new GameObject("FALTA"); }
+            if (prefab == null)
+            {   // sin el modelo no se pone otro: queda un punto vacío en su sitio (si es usable, Usable le da una caja de 0,3 m)
+                Debug.LogWarning("[Bosque] Falta el modelo " + path);
+                var falta = new GameObject("FALTA " + System.IO.Path.GetFileNameWithoutExtension(path));
+                falta.transform.SetParent(parent, false);
+                falta.transform.position = edificio.transform.TransformPoint(local);
+                return falta;
+            }
             var go = (GameObject)PrefabUtility.InstantiatePrefab(prefab, parent);
             go.name = prefab.name;
             go.transform.SetPositionAndRotation(edificio.transform.TransformPoint(local),

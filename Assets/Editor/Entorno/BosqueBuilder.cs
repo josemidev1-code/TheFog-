@@ -172,12 +172,21 @@ namespace TheFog.EditorTools.Entorno
                 juego.radioCasa = radioCasa; juego.radioTorre = radioTorre;
                 juego.generador = generadorGo != null ? generadorGo.transform : null;
                 foreach (var ayuda in Object.FindObjectsByType<TheFog.Entorno.AyudaControles>(FindObjectsInactive.Include))
-                    ayuda.texto = "WASD  andar      RATÓN  mirar      MAYÚS  correr      E  usar      F  linterna      ESC  soltar el ratón";
+                    ayuda.texto = TheFog.Entorno.BosqueGuion.Ayuda;
             }
 
             EditorSceneManager.SaveScene(scene, ScenePath);
+            // La escena del bosque es la primera versión jugable: primera de Build Settings si aún no está en la lista.
+            var lista = EditorBuildSettings.scenes.ToList();
+            if (!lista.Any(s => s.path == ScenePath))
+            {
+                lista.Insert(0, new EditorBuildSettingsScene(ScenePath, true));
+                EditorBuildSettings.scenes = lista.ToArray();
+                Debug.Log("[Bosque] Bosque.unity añadida a Build Settings como primera escena.");
+            }
             Debug.Log("[Bosque] Escena construida: " + nArb + " árboles, " + nRoc + " rocas, " + nTro + " troncos/tocones/ramas, "
                       + nMat + " arbustos, " + nHie + " matas de hierba.");
+            BosqueComprobacion.Comprobar();
         }
 
         /// <summary>Daniel, la luna, el post-proceso, los sistemas y la niebla, iguales que en TorreDaniel.</summary>
@@ -553,6 +562,7 @@ namespace TheFog.EditorTools.Entorno
         static Bounds Limites(GameObject go)
         {
             var rs = go.GetComponentsInChildren<Renderer>();
+            if (rs.Length == 0) return new Bounds(go.transform.position, Vector3.one * 0.3f); // modelo ausente: un punto de 0,3 m
             var b = rs[0].bounds;
             foreach (var r in rs) b.Encapsulate(r.bounds);
             return b;

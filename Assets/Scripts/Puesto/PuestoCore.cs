@@ -36,6 +36,16 @@ namespace TheFog.Puesto
         static bool Down(Key key) { var k = Keyboard.current; return k != null && k[key].wasPressedThisFrame; }
         static bool Held(Key key) { var k = Keyboard.current; return k != null && k[key].isPressed; }
 
+        /// <summary>Zona muerta de las palancas del mando. Por debajo no cuenta: una palanca gastada, algo desviada en
+        /// reposo, hacía que Daniel anduviera y girase solo. Por encima se reescala para que no haya salto.</summary>
+        public const float ZonaMuerta = 0.3f;
+        static Vector2 Palanca(Vector2 v)
+        {
+            float m = v.magnitude;
+            if (m <= ZonaMuerta) return Vector2.zero;
+            return v / m * Mathf.Clamp01((m - ZonaMuerta) / (1f - ZonaMuerta));
+        }
+
         public static Vector2 Move()
         {
             Vector2 v = Vector2.zero;
@@ -43,7 +53,7 @@ namespace TheFog.Puesto
             if (Held(Key.S) || Held(Key.DownArrow)) v.y -= 1;
             if (Held(Key.D) || Held(Key.RightArrow)) v.x += 1;
             if (Held(Key.A) || Held(Key.LeftArrow)) v.x -= 1;
-            var g = Gamepad.current; if (g != null) v += g.leftStick.ReadValue();
+            var g = Gamepad.current; if (g != null) v += Palanca(g.leftStick.ReadValue());
             return Vector2.ClampMagnitude(v, 1f);
         }
 
@@ -51,7 +61,7 @@ namespace TheFog.Puesto
         {
             Vector2 d = Vector2.zero;
             var m = Mouse.current; if (m != null) d += m.delta.ReadValue() * MouseSensitivity;
-            var g = Gamepad.current; if (g != null) d += g.rightStick.ReadValue() * 140f * Time.unscaledDeltaTime;
+            var g = Gamepad.current; if (g != null) d += Palanca(g.rightStick.ReadValue()) * 140f * Time.unscaledDeltaTime;
             return d;
         }
 

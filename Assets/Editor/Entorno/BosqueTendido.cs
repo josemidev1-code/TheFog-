@@ -8,9 +8,10 @@ namespace TheFog.EditorTools.Entorno
 {
     /// <summary>
     /// Tendido eléctrico del bosque: postes del ramal con el travesaño perpendicular a la línea y los cables que
-    /// los unen (cuatro hilos, uno por aislador, con su comba), la acometida a la casa, la bajada a la torre y la
-    /// manguera del generador. Los postes son un modelo (Tripo); el cable no puede serlo porque cada vano mide
-    /// distinto: es una malla de tubo fino calculada entre los aisladores y guardada como asset.
+    /// los unen (cuatro hilos, uno por aislador, con su comba), la acometida a la casa, la bajada a la torre, la
+    /// manguera del generador a la pared de la casa y una luz por poste que alumbra el sendero. Los postes son un
+    /// modelo (Tripo); el cable no puede serlo porque cada vano mide distinto: es una malla de tubo fino calculada
+    /// entre los aisladores y guardada como asset. La luz sale del poste mientras no exista el modelo «farola_camino».
     /// </summary>
     public static partial class BosqueBuilder
     {
@@ -22,6 +23,8 @@ namespace TheFog.EditorTools.Entorno
 
         // Tramos de la línea en planta (ax, az, bx, bz): bajo ellos no se plantan árboles.
         static readonly List<Vector4> vanos = new List<Vector4>();
+        // Las luces del sendero, una por poste, de la casa a la torre (el generador las enciende en este orden).
+        static readonly List<Light> lucesCamino = new List<Light>();
 
         static bool BajoElTendido(Vector2 p, float margen)
         {
@@ -33,8 +36,10 @@ namespace TheFog.EditorTools.Entorno
         static void Tendido(Transform root, GameObject casa, GameObject torre, Vector3 frenteCasa)
         {
             vanos.Clear();
+            lucesCamino.Clear();
             // Sitios de los postes: a un lado del ramal, de la casa hacia la torre.
             var sitios = new List<Vector2>(); var giros = new List<float>();
+            var normales = new List<Vector2>();   // hacia qué lado del ramal cae cada poste
             var ramal = Senderos[1];
             float acumulado = 0f, siguiente = 9f;
             for (int i = 0; i < ramal.Length - 1; i++)
@@ -44,7 +49,7 @@ namespace TheFog.EditorTools.Entorno
                 while (siguiente < acumulado + len)
                 {
                     Vector2 p = a + dir * (siguiente - acumulado) + normal * 3.4f;
-                    if (!EnEdificio(p, 2f) && ClaroDistance(p) > -11f) { sitios.Add(p); giros.Add(Random.Range(-4f, 4f)); }
+                    if (!EnEdificio(p, 2f) && ClaroDistance(p) > -11f) { sitios.Add(p); normales.Add(normal); giros.Add(Random.Range(-4f, 4f)); }
                     siguiente += 21f;
                 }
                 acumulado += len;
@@ -64,6 +69,16 @@ namespace TheFog.EditorTools.Entorno
                 var c = poste.AddComponent<CapsuleCollider>(); c.direction = 1; c.radius = 0.18f; c.height = 6f;
                 c.center = poste.transform.InverseTransformPoint(poste.transform.position + Vector3.up * 3f);
                 gos.Add(poste); cabezas.Add(Aisladores(poste));
+                // Luz del sendero: apagada hasta que arranca el generador. Sin sombras (ya hay seis luces con sombra).
+                Vector3 hacia = new Vector3(-normales[k].x, 0f, -normales[k].y);              // hacia el sendero
+                Vector3 foco = poste.transform.position + Vector3.up * 4.6f + hacia * 0.9f;
+                if (Hay(Tripo("farola_camino")))
+                {   // la farola de Josemi, cuando exista: al borde del sendero, y la luz sale de su cabeza
+                    var farola = Prop(Tripo("farola_camino"), postes, sitios[k] - normales[k] * 1.9f, Yaw(hacia), 1f, true, 0.4f);
+                    if (farola != null) { var bf = Limites(farola); foco = new Vector3(bf.center.x, bf.max.y - 0.3f, bf.center.z); }
+                }
+                var luz = Luz("Luz poste " + k, poste.transform, foco, new Color(1f, 0.74f, 0.42f), 5.5f, 16f, false);
+                luz.enabled = false; lucesCamino.Add(luz);
             }
             Physics.SyncTransforms();
 
@@ -100,24 +115,25 @@ namespace TheFog.EditorTools.Entorno
                     Vano(v, tri, cab[2], p2, Comba * 0.7f); Vano(v, tri, cab[3], p2, Comba * 0.7f);
                     Vector3 abajo = EnPata(pie, alto, pie.y + 0.12f);
                     Tubo(v, tri, new[] { p1, p2, abajo }, CableRadio);
-                    // Manguera del generador a la pata, por el suelo.
-                    if (generadorGo != null)
-                    {
-                        Vector3 g = generadorGo.transform.position;
-                        var suelo = new List<Vector3> { g + Vector3.up * 0.3f };
-                        Vector2 a = new Vector2(g.x, g.z), b = new Vector2(abajo.x, abajo.z), n = new Vector2(-(b - a).y, (b - a).x).normalized;
-                        for (int s = 1; s < 28; s++)
-                        {
-                            float t = s / 28f;
-                            float onda = (Mathf.Sin(t * Mathf.PI * 2f) * 0.38f + Mathf.Sin(t * Mathf.PI * 5f + 1.3f) * 0.12f) * Mathf.Sin(t * Mathf.PI);
-                            suelo.Add(Suelo(Vector2.Lerp(a, b, t) + n * onda, 0f) + Vector3.up * CableRadio);
-                        }
-                        suelo.Add(abajo);
-                        Tubo(v, tri, suelo, CableRadio);
-                    }
                 }
                 else Debug.LogWarning("[Bosque] No encuentro la pata de la torre para la bajada del tendido.");
                 vanos.Add(new Vector4(sitios[u].x, sitios[u].y, TorrePos.x, TorrePos.y));
+            }
+
+            // Manguera del generador a la pared de la casa: por el suelo, con una onda, y sube un palmo por los troncos.
+            if (generadorGo != null)
+            {
+                Vector3 g = generadorGo.transform.position, pared = casa.transform.TransformPoint(new Vector3(1.2f, SueloCasa + 0.05f, -2.66f));
+                var suelo = new List<Vector3> { g + Vector3.up * 0.3f };
+                Vector2 a = new Vector2(g.x, g.z), b = new Vector2(pared.x, pared.z), n = new Vector2(-(b - a).y, (b - a).x).normalized;
+                for (int s = 1; s < 10; s++)
+                {
+                    float t = s / 10f;
+                    float onda = Mathf.Sin(t * Mathf.PI * 2f) * 0.18f * Mathf.Sin(t * Mathf.PI);
+                    suelo.Add(Suelo(Vector2.Lerp(a, b, t) + n * onda, 0f) + Vector3.up * CableRadio);
+                }
+                suelo.Add(pared); suelo.Add(pared + Vector3.up * 0.35f);
+                Tubo(v, tri, suelo, CableRadio);
             }
 
             // Una sola malla para todo el cable.

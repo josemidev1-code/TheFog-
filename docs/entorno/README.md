@@ -4,6 +4,53 @@ Escena: `Assets/Scenes/TorreDaniel.unity`. Objetivo: la torre de vigilancia, la 
 
 Las entradas van de la más reciente a la más antigua.
 
+## 20/11/2026 (madrugada) — Bosque: primera versión jugable, construida y probada en Unity
+
+Encargo de Josemi (19/11 noche): el prólogo completo. Detalle en [PRIMERA_VERSION.md](PRIMERA_VERSION.md).
+
+- **Qué hay:** Daniel aparece en la cabaña de tarde, abre el diario (J), oye el informativo de la «Cadena Regional» con
+  subtítulos, se acuesta, despierta a las 04:17 con apagón, lo comprueba (tele, radio, ventana), coge linterna y bidón
+  (ahora fuera, junto a la furgoneta), reposta y arranca el generador (ahora junto a la cabaña), se encienden casa,
+  porche, cinco postes del sendero, pie de torre y cabina, sube a la torre y el cabo Salcedo, policía municipal, le
+  cuenta por la emisora la explosión de la mina. Tarjeta final. Misiones en pantalla, mapa (M), walkie (T), subtítulos
+  con nombre del que habla.
+- **Código nuevo** (`Assets/Scripts/Entorno/`): `BosqueJuego` partido en tres (`BosqueJuego`, `BosqueJuegoFases`,
+  `BosqueJuegoMundo`), `BosqueInterfaz` + `BosqueInterfazPantallas` + `UiFog` (interfaz), `BosqueSonido` +
+  `SintesisBosque` (sonido), `BosqueGuion` (todos los textos), `MundoBosque`, `Accionable`, `VideoHueco`.
+  Editor: `BosqueComprobacion` (menú 3), `RecursosFogPostprocessor`. Prueba: `Assets/Tests/BosquePruebaDriver.cs` (menú 4).
+- **Recursos** en `Assets/Resources/`: 95 clips de audio (pasos, viento, grillos, puertas, música y sintetizados),
+  interfaz PSX tema «fog», mapa dibujado y fuentes. Guiones: `tools/prepara_audio.py`, `prepara_ui.py`, `genera_mapa.py`,
+  `maqueta_ui.py`. Licencias: [ASSETS_EXTERNOS.md](ASSETS_EXTERNOS.md) (la música es CC BY-SA: decide Josemi si se queda).
+- **`tools/compilar_sin_unity.sh`**: comprueba que todo compila sin abrir Unity (usa el compilador del editor).
+- **Probado de verdad** (Unity ya tiene licencia: Josemi instaló Unity Hub): escena construida, comprobación del menú 3
+  todo OK, y partida completa con la prueba automática: superada, 0 fallos ([informe](primera_version_prueba.json)).
+  Capturas: [inicio](../capturas/primera_version/juego_01_inicio.png), [diario](../capturas/primera_version/juego_02_diario.png),
+  [mapa](../capturas/primera_version/juego_04_mapa.png), [walkie](../capturas/primera_version/juego_05_walkie.png),
+  [informativo](../capturas/primera_version/juego_08_informativo_subtitulo.png), [apagón](../capturas/primera_version/juego_10_madrugada_apagon.png),
+  [llamada](../capturas/primera_version/juego_15_llamada_1.png), [final](../capturas/primera_version/juego_17_final.png),
+  [cabaña con los muebles de Josemi](../capturas/primera_version/pv_01_cama.png).
+- **Sin comprobar:** una partida a mano (la prueba usa atajos F9/F10/F11) y cómo suena (nadie lo ha oído).
+- **Corregido después de la primera pasada:** cristales blancos vistos desde dentro y texto que salía doble (sombra demasiado separada). Comprobado en capturas de otras dos pasadas, 0 fallos.
+- **Mando:** hay un mando conectado y Daniel se movía solo; añadida zona muerta de 0,3 a las palancas (sin verificar con números).
+- **Tras oírlo Josemi:** voces de fondo apagadas y música más alta. Pendiente una banda sonora mejor.
+- **Discord:** publicado en `#avances` (texto + diez capturas).
+- **Falta de Josemi:** el vídeo del informativo (`Assets/StreamingAssets/Video/noticia_valdara.mp4`) y los modelos de
+  Tripo (tabla en PRIMERA_VERSION.md). Retrete exterior, palanganero y palomilla no tienen sitio escrito todavía.
+- Sin commit (norma: solo cuando Josemi lo pida).
+
+## 19/11/2026 (tarde-noche) — Bosque: los muebles de Josemi, en la casa (SIN CONSTRUIR TODAVÍA EN UNITY)
+
+Josemi dejó 15 modelos suyos de Tripo en `Desktop/thefogjuego/ModelosTheFog` (fuera del proyecto). Hoja de todos: [modelos_josemi_19nov.png](modelos_josemi_19nov.png).
+El proyecto ahora está en `Desktop/thefogjuego/THE FOG/ProyectoUnity` (antes `Desktop/THE FOG/ProyectoUnity`).
+
+- **Preparados con Blender** (`bash tools/tripo_prepare_usuario.sh`, la tabla dice qué archivo es cada uno): alfombra, radiador, escritorio, planta_colgante, mesita_noche, cama, libreria, corcho, ventana_cortinas y libros (de ~1,9 M de triángulos a 2–12 k con el relieve horneado), y bidon, linterna, generador_daniel y radio_antigua (ya venían ligeros: modo nuevo `ligero` de `tools/tripo_prepare.py`, que solo escala y centra). Están en `Assets/Models/Retro/Tripo/<nombre>/`.
+- **Colocación escrita en `BosqueAsentamiento.cs`** (función nueva `Mueble`): la cama de hierro y la mesita con despertador sustituyen a las del pack; la librería va en la pared del fondo donde estaba la cómoda (la cómoda del pack se quita) con la maceta encima; el escritorio sustituye a la mesa de la radio, con el corcho en la pared, y sobre él la radio antigua (es la radio de casa), el cuaderno, la taza y el detector del abuelo; radiador bajo la ventana del lado de la cama y la ventana con cortinas por dentro tapando la del pack; alfombra en el centro. La linterna y el bidón de Josemi son ahora los objetos que se recogen; su generador sustituye al anterior al pie de la torre (escala 1,3). Se recolocan la mochila (pared del fondo), el calendario y el cubo; se quita un montón de leña.
+- **Comprobado solo en maqueta de Blender**, no en Unity: [planta](maqueta_casa_planta.png), [cama y ventana](maqueta_casa_cama.png), [escritorio](maqueta_casa_escritorio.png), [librería](maqueta_casa_libreria.png). La maqueta se rehace con `tools/maqueta/maqueta_cabana.py` y `cabana_layout.json` (mismas coordenadas locales que el constructor).
+- **Por qué no en Unity:** el editor no pasa del aviso de licencia («No valid Unity Editor license found») y Unity Hub no está en este equipo. **Falta**: abrir Unity con licencia, dejar que importe, ejecutar `THE FOG → Bosque → 2. Construir escena del bosque`, mirar la casa y el generador y repetir la prueba completa en Play. `Bosque.unity` sigue siendo la del commit e28e22e hasta entonces.
+- `Assets/Editor/Entorno/BosqueInforme.cs` (nuevo): informe de piezas y capturas con luz de trabajo en modo batch (`-executeMethod TheFog.EditorTools.Entorno.BosqueInforme.Informe` / `.Capturas`). Sin probar, ni siquiera compilado, por lo mismo.
+- **Avisos de estética**: el radiador de hierro no cuadra del todo con una cabaña calentada por estufa de leña (no hay caldera ni tubos); la pila es de litio («Lithium-ion», rótulo moderno y en inglés) y no se ha colocado; el modelo «libros» trae piezas flotando en el aire (radio pequeña, taza, lapicero, cenicero) y no se ha colocado; la planta «colgante» no trae colgador, por eso va apoyada sobre la librería.
+- Ninguno de los 15 es de la lista pendiente (bombilla, aplique, retrete, palanganero, palomilla, cuadro eléctrico). De la bombilla hay foto de referencia en `Desktop/thefogjuego/fotosmodelosthefog/`.
+
 ## Dónde lo dejamos (19/11/2026, mañana) — escena del bosque
 
 - **Para jugar el bosque:** abrir `Assets/Scenes/Bosque.unity` y pulsar Play (con esa escena abierta, Play arranca en ella; con cualquier otra sigue arrancando `TorreDaniel`). WASD, ratón, Mayús correr, **E usar**, **F linterna**, Esc suelta el ratón.
