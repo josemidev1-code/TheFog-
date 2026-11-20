@@ -20,6 +20,8 @@ Con eso se hizo, de verdad:
    `docs/entorno/primera_version_prueba.json`: **superada, 0 fallos, 0 avisos**, 285 s. Pasa por diario, mapa, walkie,
    tele, informativo, dormir, madrugada, generador (10 de 10 luces), cabina, llamada del cabo Salcedo y tarjeta final.
 4. Capturas reales en `docs/capturas/primera_version/` (`juego_*.png` en Play; `pv_*.png` de la escena con luz de trabajo).
+5. **Subido a GitHub el 20/11:** rama `main`, commit `82e0fb0` (todo lo de esta tanda, con la escena reconstruida). El audio
+   (`.wav`, `.ogg`) va por Git LFS. La carpeta `.codex/` no se sigue.
 
 **Lo que la prueba automática NO cubre:** usa atajos (no anda de la cama al generador ni sube a la torre a pie, no coge
 la linterna ni el bidón a mano, no prueba el orden libre) y nadie ha **oído** el sonido. Falta una partida a mano.
@@ -48,7 +50,7 @@ la vieja», manda esta actualización.
 abre en este equipo («No valid Unity Editor license found»; Unity Hub no está instalado). Lo único comprobado es que el
 código **compila** con el compilador de Unity sin abrir el editor (`bash tools/compilar_sin_unity.sh`). Nadie ha
 construido la escena con los cambios, nadie ha pulsado Play, nadie ha oído un sonido ni ha visto una pantalla.
-`Bosque.unity` sigue siendo la del commit e28e22e: no tiene ni los muebles de Josemi del 19/11 ni nada del prólogo.
+(Ya no es así: `Bosque.unity` se reconstruyó el 20/11 con los muebles de Josemi y el prólogo, y está subida en el commit `82e0fb0`.)
 Ninguno de estos cambios está en un commit.
 
 Pasos cuando Unity abra (detalle en [docs/entorno/PRIMERA_VERSION.md](docs/entorno/PRIMERA_VERSION.md)):

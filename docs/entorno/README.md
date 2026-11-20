@@ -36,7 +36,7 @@ Encargo de Josemi (19/11 noche): el prólogo completo. Detalle en [PRIMERA_VERSI
 - **Discord:** publicado en `#avances` (texto + diez capturas).
 - **Falta de Josemi:** el vídeo del informativo (`Assets/StreamingAssets/Video/noticia_valdara.mp4`) y los modelos de
   Tripo (tabla en PRIMERA_VERSION.md). Retrete exterior, palanganero y palomilla no tienen sitio escrito todavía.
-- Sin commit (norma: solo cuando Josemi lo pida).
+- **Subido a GitHub** a petición de Josemi: `main`, commit `82e0fb0`. Audio en Git LFS.
 
 ## 19/11/2026 (tarde-noche) — Bosque: los muebles de Josemi, en la casa (SIN CONSTRUIR TODAVÍA EN UNITY)
 

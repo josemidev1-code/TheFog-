@@ -16,6 +16,8 @@ Con eso se hizo, de verdad:
    `docs/entorno/primera_version_prueba.json`: **superada, 0 fallos, 0 avisos**, 285 s. Pasa por diario, mapa, walkie,
    tele, informativo, dormir, madrugada, generador (10 de 10 luces), cabina, llamada del cabo Salcedo y tarjeta final.
 4. Capturas reales en `docs/capturas/primera_version/` (`juego_*.png` en Play; `pv_*.png` de la escena con luz de trabajo).
+5. **Subido a GitHub el 20/11:** rama `main`, commit `82e0fb0` (todo lo de esta tanda, con la escena reconstruida). El audio
+   (`.wav`, `.ogg`) va por Git LFS. La carpeta `.codex/` no se sigue.
 
 **Lo que la prueba automática NO cubre:** usa atajos (no anda de la cama al generador ni sube a la torre a pie, no coge
 la linterna ni el bidón a mano, no prueba el orden libre) y nadie ha **oído** el sonido. Falta una partida a mano.
